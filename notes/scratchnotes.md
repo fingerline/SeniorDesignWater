@@ -39,7 +39,7 @@ PriorityItems is an array, in this order, of sites. It is populated using arrays
 
 and then these WaterDataPriorityItem objects are populated into priorityItems array.
 
-This MAY be easier to track once i know how to read it.
+This MAY be easier to track once I know how to read it.
 
 ## EXCEL SHEET (WATER SEPETEMBER)
 
