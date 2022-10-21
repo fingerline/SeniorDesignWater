@@ -6,6 +6,7 @@ let state = {
   locationsbypriority: [],
   locationsbyposition: [],
   runoff: null,
+  minflowreq: 0
 }
 
 class Location{
@@ -67,14 +68,36 @@ function initializeGame(){
   locations.push(new Location("Anglo Organic Farm", 13, 29, "2000", "Farm", .80, 100))
   locations.push(new Location("Las Cruces, NM", 17, 30, "2007", "Urban", .20, 400))
 
-  //holy moly just trust this
+  // holy moly just trust this
 
+  // Two independent shallow copy list of these locations into state
+  // the changes to the locations will be synced, but they're ordered
+  // differently. 'locationsbypriority' is used for initial allocation
+  // and 'locationsbyposition' is used for physical withdrawals.
   state.locationsbypriority = [...locations];
   state.locationsbyposition = [...locations];
   state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
   state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
 
-  waterflow = getNewRunoff()
+  // 'runoff' is not to change DURING a year. This will be useful for
+  // UI and scoring. currentWaterFlow is goign to be used for both
+  // calculation cycles.
+
+  state.runoff = getNewRunoff();
+  state.currentwaterflow = runoff;
+
+  //initial theoretical cycle
+  for(location of state.locationsbypriority){
+
+    //theoretical inflow
+    location.allotted = Math.max(0, Math.min(location.requested),
+     state.currentwaterflow - state.minflowreq);
+    state.currentwaterflow -= location.allotted;
+    
+    //calculate t.consumption into outflow
+    state.currentwaterflow += (location.allotted * (1 - location.percentconsumed));
+  }
+
 }
 
 function initializeYear() {
@@ -84,16 +107,3 @@ function initializeYear() {
 
 
 initializeGame();
-
-console.log('Priorities:');
-outstring = '';
-for(element of state.locationsbypriority){
-  outstring += "(" + element.priority + ') ' + element.name + ", ";
-}
-console.log(outstring)
-console.log('Positions:');
-outstring = '';
-for(element of state.locationsbyposition){
-  outstring += "(" + element.position + ') ' + element.name + ", ";
-}
-console.log(outstring)
