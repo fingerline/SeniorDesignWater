@@ -36,10 +36,14 @@ class Location{
   // graphics need to be done down the line.
 }
 
+// Generate new runoff.
 function getNewRunoff(){
   return Math.floor(Math.random() * (MAX_RUNOFF - MIN_RUNOFF + 1)) + MIN_RUNOFF;
 }
 
+
+// Housekeeping operations that must take place before the game starts,
+// as well as starting the first year.
 function initializeGame(){
   //Set up base state
   state.year = 0;
@@ -96,8 +100,36 @@ function initializeGame(){
   // !!!DEBUG CODE!!!
   state.runoff = 10100;
 
-  state.currentwaterflow = state.runoff;
+  calculateFlows();
+}
 
+// This will need to be updated for trading when that comes.
+function updateScore(remainingflow){
+
+  globalpoints = 0;
+  usagepoints = 0;
+  fishpoints = 10*remainingflow;
+  for(location of state.locationsbypriority){
+    location.points = location.withdrawn * SCORETYPE[location.type];
+    usagepoints += location.points;
+  }
+  globalpoints = Math.round(usagepoints + fishpoints)
+  console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
+   `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
+
+}
+
+// This function takes the rules and trades that the players have
+// set forth in their interaction with the game and calculates the
+// throughput and usage of every location in the game based on the
+// proceedings found in the original flash game: First a theoretical
+// priority-based flow model to determine each location's "lot" of
+// the water, and then a physical model that relies on position to
+// actually dole out the water.
+
+function calculateFlows(){
+
+  state.currentwaterflow = state.runoff;
 
   //initial theoretical cycle
   for(location of state.locationsbypriority){
@@ -130,31 +162,18 @@ function initializeGame(){
     state.currentwaterflow -= (location.withdrawn * (location.percentconsumed));
     console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
   }
-  updateScore();
-
-
-
+  updateScore(state.currentwaterflow);
 }
 
-// This will need to be updated for trading when that comes.
-function updateScore(){
+// This function handles the state information changes that
+// occur when a year passes from one to the other.
 
-  // for(location of state.locationsbyposition){
-  //   console.log(`Loc ${location.priority}@${location.position}:`);
-  //   console.log(`\tWithdrew ${location.withdrawn.toFixed(2)} of target ${location.allotted.toFixed(2)}`)
-  //   console.log(`\t\tDesired ${location.requested}`)
-  //   console.log(`\tScores ${(location.withdrawn * SCORETYPE[location.type]).toFixed(2)} for` +
-  //         ` ${(location.withdrawn).toFixed(2)}@${location.type}\n\n`);
-  // }
-
-  globalpoints = 0;
-  for(location of state.locationsbypriority){
-    location.points = location.withdrawn * SCORETYPE[location.type];
-    globalpoints += location.points;
-  }
-  console.log(globalpoints)
-
-}
+// The original game has this step entail several things: 
+// - Initialize new runoff.
+// - Prompt users to interact with the dam (if a dam exists)
+// - Record the previous year's final scoring output in history
+// - Clear previous year information (other than score and
+//      dam info
 
 function initializeYear() {
   year += 1;
