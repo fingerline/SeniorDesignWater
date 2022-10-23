@@ -1,6 +1,14 @@
 const MIN_RUNOFF = 5000;
 const MAX_RUNOFF = 20000; 
 
+//converting water withdrawn to points
+const SCORETYPE = {
+  'Farm': 1,
+  'Mining': 2,
+  'Industrial': 5,
+  'Urban': 10
+}
+
 let state = {
   year: null,
   locationsbypriority: [],
@@ -19,8 +27,9 @@ class Location{
     this.percentconsumed = percentconsumed;
     this.requested = requested
     this.allotted = 0;
-    this.consumed = 0;
+    this.withdrawn = 0;
     this.points = 0;
+    this.tradevol = 0;
   }
   // These are static so they can probably be stored in a .json file somewhere and
   // Restored if push comes to shove, though I'd like to avoid doing so considering
@@ -84,26 +93,66 @@ function initializeGame(){
   // calculation cycles.
 
   state.runoff = getNewRunoff();
-  state.currentwaterflow = runoff;
+  // !!!DEBUG CODE!!!
+  state.runoff = 10100;
+
+  state.currentwaterflow = state.runoff;
+
 
   //initial theoretical cycle
   for(location of state.locationsbypriority){
 
+    console.log(`Loc ${location.priority}@${location.position}:`)
+    console.log(`\tInflow:${state.currentwaterflow.toFixed(2)}`)
+    console.log(`\tRequested:${location.requested.toFixed(2)}`)
     //theoretical inflow
-    location.allotted = Math.max(0, Math.min(location.requested),
-     state.currentwaterflow - state.minflowreq);
+    location.allotted = Math.max(0, Math.min(location.requested,
+     state.currentwaterflow - state.minflowreq));
+    console.log(`\tAllottment:${location.allotted.toFixed(2)}`);
     state.currentwaterflow -= location.allotted;
     
     //calculate t.consumption into outflow
     state.currentwaterflow += (location.allotted * (1 - location.percentconsumed));
+    console.log(`\tOutflow:${state.currentwaterflow.toFixed(2)}`);
   }
+
+  //ending physical cycle
+  state.currentwaterflow = state.runoff;
+
+  for(location of state.locationsbypriority){
+    location.withdrawn = Math.min(state.currentwaterflow,
+     location.allotted + location.tradevol);
+    state.currentwaterflow -= (location.withdrawn * (1-location.percentconsumed)); 
+  }
+  updateScore();
+
+
+
+}
+
+// This will need to be updated for trading when that comes.
+function updateScore(){
+
+  // for(location of state.locationsbyposition){
+  //   console.log(`Loc ${location.priority}@${location.position}:`);
+  //   console.log(`\tWithdrew ${location.withdrawn.toFixed(2)} of target ${location.allotted.toFixed(2)}`)
+  //   console.log(`\t\tDesired ${location.requested}`)
+  //   console.log(`\tScores ${(location.withdrawn * SCORETYPE[location.type]).toFixed(2)} for` +
+  //         ` ${(location.withdrawn).toFixed(2)}@${location.type}\n\n`);
+  // }
+
+  globalpoints = 0;
+  for(location of state.locationsbypriority){
+    location.points = location.withdrawn * SCORETYPE[location.type];
+    globalpoints += location.points;
+  }
+  console.log(globalpoints)
 
 }
 
 function initializeYear() {
-  year += 1
-  waterflow = getNewRunoff()
+  year += 1;
+  waterflow = getNewRunoff();
 }
-
 
 initializeGame();
