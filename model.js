@@ -102,27 +102,33 @@ function initializeGame(){
   //initial theoretical cycle
   for(location of state.locationsbypriority){
 
-    console.log(`Loc ${location.priority}@${location.position}:`)
-    console.log(`\tInflow:${state.currentwaterflow.toFixed(2)}`)
-    console.log(`\tRequested:${location.requested.toFixed(2)}`)
+    // console.log(`Loc ${location.priority}@${location.position}:`)
+    // console.log(`\tInflow:${state.currentwaterflow.toFixed(2)}`)
+    // console.log(`\tRequested:${location.requested.toFixed(2)}`)
     //theoretical inflow
     location.allotted = Math.max(0, Math.min(location.requested,
      state.currentwaterflow - state.minflowreq));
-    console.log(`\tAllottment:${location.allotted.toFixed(2)}`);
+    // console.log(`\tAllottment:${location.allotted.toFixed(2)}`);
     state.currentwaterflow -= location.allotted;
     
     //calculate t.consumption into outflow
     state.currentwaterflow += (location.allotted * (1 - location.percentconsumed));
-    console.log(`\tOutflow:${state.currentwaterflow.toFixed(2)}`);
+    // console.log(`\tOutflow:${state.currentwaterflow.toFixed(2)}`);
   }
 
   //ending physical cycle
   state.currentwaterflow = state.runoff;
 
-  for(location of state.locationsbypriority){
+  for(location of state.locationsbyposition){
+    console.log(`Loc ${location.priority}@${location.position}:`);
+    console.log(`\tInflow: ${state.currentwaterflow.toFixed(2)}`);
+    console.log(`\tAlotted: ${location.allotted.toFixed(2)}`);
+    console.log(`\tTradeflow: ${location.tradevol.toFixed(2)}`);
     location.withdrawn = Math.min(state.currentwaterflow,
      location.allotted + location.tradevol);
-    state.currentwaterflow -= (location.withdrawn * (1-location.percentconsumed)); 
+    console.log(`\t!!Withdrawn: ${location.withdrawn.toFixed(2)}`);
+    state.currentwaterflow -= (location.withdrawn * (location.percentconsumed));
+    console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
   }
   updateScore();
 
