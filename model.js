@@ -14,7 +14,8 @@ let state = {
   locationsbypriority: [],
   locationsbyposition: [],
   runoff: null,
-  minflowreq: 0
+  minflowreq: 0,
+  trades: []
 }
 
 class Location{
@@ -30,10 +31,22 @@ class Location{
     this.withdrawn = 0;
     this.points = 0;
     this.tradevol = 0;
+    this.tradepoints = 0;
+    
   }
   // These are static so they can probably be stored in a .json file somewhere and
   // Restored if push comes to shove, though I'd like to avoid doing so considering
   // graphics need to be done down the line.
+}
+
+class Trade{
+  constructor(player1, player2, volume, priceperunit){
+    this.player1 = player1;
+    this.player2 = player2;
+    this.volume = volume;
+    this.priceperunit = price;
+    this.price = volume * priceperunit;
+  }
 }
 
 // Generate new runoff.
@@ -41,6 +54,14 @@ function getNewRunoff(){
   return Math.floor(Math.random() * (MAX_RUNOFF - MIN_RUNOFF + 1)) + MIN_RUNOFF;
 }
 
+// Make and register a trade.
+function makeTrade(seller, buyer, volume, priceperunit){
+  state.trades.push(new Trade(seller.priority, buyer.priority, volume, priceperunit));
+  seller.tradevol -= volume;
+  seller.tradepoints += priceperunit * volume;
+  buyer.tradevol += volume;
+  buyer.tradepoints -= priceperunit * volume;
+}
 
 // Housekeeping operations that must take place before the game starts,
 // as well as starting the first year.
@@ -110,7 +131,7 @@ function updateScore(remainingflow){
   usagepoints = 0;
   fishpoints = 10*remainingflow;
   for(location of state.locationsbypriority){
-    location.points = location.withdrawn * SCORETYPE[location.type];
+    location.points = location.withdrawn * SCORETYPE[location.type] + location.tradepoints;
     usagepoints += location.points;
   }
   globalpoints = Math.round(usagepoints + fishpoints)
@@ -152,15 +173,15 @@ function calculateFlows(){
   state.currentwaterflow = state.runoff;
 
   for(location of state.locationsbyposition){
-    console.log(`Loc ${location.priority}@${location.position}:`);
-    console.log(`\tInflow: ${state.currentwaterflow.toFixed(2)}`);
-    console.log(`\tAlotted: ${location.allotted.toFixed(2)}`);
-    console.log(`\tTradeflow: ${location.tradevol.toFixed(2)}`);
+    // console.log(`Loc ${location.priority}@${location.position}:`);
+    // console.log(`\tInflow: ${state.currentwaterflow.toFixed(2)}`);
+    // console.log(`\tAlotted: ${location.allotted.toFixed(2)}`);
+    // console.log(`\tTradeflow: ${location.tradevol.toFixed(2)}`);
     location.withdrawn = Math.min(state.currentwaterflow,
      location.allotted + location.tradevol);
-    console.log(`\t!!Withdrawn: ${location.withdrawn.toFixed(2)}`);
+    // console.log(`\t!!Withdrawn: ${location.withdrawn.toFixed(2)}`);
     state.currentwaterflow -= (location.withdrawn * (location.percentconsumed));
-    console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
+    // console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
   }
   updateScore(state.currentwaterflow);
 }
@@ -177,7 +198,8 @@ function calculateFlows(){
 
 function initializeYear() {
   year += 1;
-  waterflow = getNewRunoff();
+  state.runoff = getNewRunoff();
+  state.trades = [];
 }
 
 initializeGame();
