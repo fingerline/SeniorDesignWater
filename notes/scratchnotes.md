@@ -39,7 +39,7 @@ PriorityItems is an array, in this order, of sites. It is populated using arrays
 
 and then these WaterDataPriorityItem objects are populated into priorityItems array.
 
-This MAY be easier to track once i know how to read it.
+This MAY be easier to track once I know how to read it.
 
 ## EXCEL SHEET (WATER SEPETEMBER)
 
@@ -66,8 +66,7 @@ Each row continues this trend, taking the previous row's "TOTAL REMAINING" as AV
 
 There appears to be a SECOND calculation on the sheet, labeled NEW TABLE. This uses the priority system's results to construct the "actual vision" of what's happening.
 
-Each row starts with the literal amount of water that is flowing to that position. It then attempts to withdraw the amount that the priority system determined it 
-should take in the PRIORITY WITHDRAW column.
+Each row starts with the literal amount of water that is flowing to that position. It then attempts to withdraw the amount that the priority system determined it should take in the PRIORITY WITHDRAW column.
 
 The amount of actual water withdrawn is the *lower* number between these two values: The **INPUT FLOW**, or the **PRIORITY WITHDRAW** + any **TRADE VOLUME** associated with it.
 This, I suppose, represents the option to trade where any water that is "bought" from another source is ""reserved"" for the purchaser, which cannot exceed the input flow physically
