@@ -1,0 +1,27 @@
+17 buys from 5, 90 @ 4
+17 buys from 7, 60 @ 3
+24 buys from 17, 20 @ 8
+
+5 has -90Vol at 4 price, total is 780
+
+7 has -160Vol at 3 price, total is 520
+
+24 has +20Vol at 8 price, total is 18240
+
+17 has +130Vol at 8 price, total is 3547.16 ??? should be something else
+
+total points are 42219 EXCEL . INCONSISTENT WITH CHART
+
+GAME SAYS:
+Watershed: 9408
+Trades:
+9 Sells 600 to 24 at 3
+24 Sells 1000 to 28 at 9
+23 Sells 1272 to 24 at 6
+
+9 is at 2600 points (800 in)
+24 is at 19568 (2000 in)
+28 is at 1233 (1023 in)
+23 is at 7860 (228 in)
+
+gives score of 64178 total
