@@ -50,8 +50,13 @@ class Trade{
 }
 
 // Generate new runoff.
-function getNewRunoff(){
-  return Math.floor(Math.random() * (MAX_RUNOFF - MIN_RUNOFF + 1)) + MIN_RUNOFF;
+function setNewRunoff(setval = -1){
+  if(setval == -1){
+    state.runoff = Math.floor(Math.random() * (MAX_RUNOFF - MIN_RUNOFF + 1)) + MIN_RUNOFF;
+  }
+  else{
+    state.runoff = setval;
+  }
 }
 
 // Make and register a trade.
@@ -113,15 +118,6 @@ function initializeGame(){
   state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
   state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
 
-  // 'runoff' is not to change DURING a year. This will be useful for
-  // UI and scoring. currentWaterFlow is goign to be used for both
-  // calculation cycles.
-
-  state.runoff = getNewRunoff();
-  // !!!DEBUG CODE!!!
-  state.runoff = 10100;
-
-  calculateFlows();
 }
 
 // This will need to be updated for trading when that comes.
@@ -203,3 +199,5 @@ function initializeYear() {
 }
 
 initializeGame();
+setNewRunoff(7000);
+set
