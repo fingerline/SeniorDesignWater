@@ -9,17 +9,20 @@ const SCORETYPE = {
   'Urban': 10
 }
 
+// Global state table, containing important information for all of the game.
 let state = {
   year: null,
   locationsbypriority: [],
   locationsbyposition: [],
   runoff: null,
+  initrunoff: 0,
   minflowreq: 0,
   trades: [],
   damfund: 0,
   damdonos: {},
   damactive: false,
   damheldvol: 0,
+  damcap: 0,
 }
 
 class Location{
@@ -43,6 +46,8 @@ class Location{
   // graphics need to be done down the line.
 }
 
+// This class contains the information necessary to keep track of trades in the 
+// trades table.
 class Trade{
   constructor(player1, player2, volume, priceperunit){
     this.player1 = player1;
@@ -55,11 +60,15 @@ class Trade{
 
 // Generate new runoff.
 function setNewRunoff(setval = -1){
+  // This setting is the default functionality, which generates a random runoff
   if(setval == -1){
     state.runoff = Math.floor(Math.random() * (MAX_RUNOFF - MIN_RUNOFF + 1)) + MIN_RUNOFF;
+    state.initrunoff = state.runoff;
   }
+  // This case is for debug and testing purposes, where a specific runoff is desired.
   else{
     state.runoff = setval;
+    state.initrunoff = state.runoff;
   }
 }
 
@@ -77,6 +86,8 @@ function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   buyer.tradepoints -= priceperunit * volume;
 }
 
+// A single player puts points forth towards the construction of a dam.
+// This updates their contribution in what will become the "dam chart" in the game.
 function fundDam(funderprio, amt){
   if(state.damactive == 1){
     console.log("Error: Cannot fund dam that already exists.");
@@ -98,6 +109,41 @@ function fundDam(funderprio, amt){
       of a total of ${state.damfund}.`);
     return;
   }
+}
+
+function buildDam(){
+  if(state.damfund == 0){
+    console.log("Dam fund is empty! Fund the dam before trying to build it");
+    return;
+  }
+  state.damactive = true;
+  state.damcap = damfund;
+  return;
+}
+
+function fillDam(amt){
+  if(amt > state.runoff - state.minflowreq){
+    console.log(`Error: Can't fill dam with ${amt} from runoff of ${state.runoff}.`);
+    return;
+  }
+  if(state.damheldvol + amt > state.damcap){
+    console.log(`Error: Can't fill dam with ${amt} as dam only has ${state.damcap - state.damheldvol}
+      space remaining.`);
+    return;
+  }
+  state.damheldvol += amt;
+  state.runoff -= amt;
+  return;
+}
+
+function releaseDam(amt){
+  if(amt > state.damheldvol){
+    console.log(`Error: Can't release ${amt} water from reserve of ${state.damheldvol}.`);
+    return;
+  }
+  state.runoff += amt;
+  state.damheldvol -= amt;
+  return;
 }
 
 // Housekeeping operations that must take place before the game starts,
@@ -152,7 +198,7 @@ function initializeGame(){
 
 }
 
-// This will need to be updated for trading when that comes.
+// Calculate scores. This should only be called from calculateFlows(), and for testing.
 function updateScore(remainingflow){
 
   globalpoints = 0;
@@ -223,7 +269,6 @@ function calculateFlows(){
 // - Record the previous year's final scoring output in history
 // - Clear previous year information (other than score and
 //      dam info
-
 function initializeYear() {
   year += 1;
   state.runoff = getNewRunoff();
