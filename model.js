@@ -44,7 +44,7 @@ class Trade{
     this.player1 = player1;
     this.player2 = player2;
     this.volume = volume;
-    this.priceperunit = price;
+    this.priceperunit = priceperunit;
     this.price = volume * priceperunit;
   }
 }
@@ -60,7 +60,12 @@ function setNewRunoff(setval = -1){
 }
 
 // Make and register a trade.
-function makeTrade(seller, buyer, volume, priceperunit){
+function makeTrade(sellerprio, buyerprio, volume, priceperunit){
+  seller = state.locationsbypriority[sellerprio-1];
+  buyer = state.locationsbypriority[buyerprio-1];
+  console.log(`${seller.name} (${seller.priority}) sells 
+    ${volume} ac-ft of water to ${buyer.name} (${buyer.priority})
+    at ${priceperunit} per ac-ft, for a total of ${volume * priceperunit}.`);
   state.trades.push(new Trade(seller.priority, buyer.priority, volume, priceperunit));
   seller.tradevol -= volume;
   seller.tradepoints += priceperunit * volume;
@@ -199,5 +204,10 @@ function initializeYear() {
 }
 
 initializeGame();
-setNewRunoff(7000);
-set
+setNewRunoff(9408);
+makeTrade(9,24,600,3);
+makeTrade(24,28,1000,9);
+makeTrade(23,24,1272,6);
+
+
+calculateFlows();

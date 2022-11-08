@@ -25,3 +25,17 @@ Trades:
 23 is at 7860 (228 in)
 
 gives score of 64178 total
+
+UPDATE NOV 8:
+Looking at 7000 watershed (starting position, see notradeat700sample.png)
+score seems to be consistent. Don't have access to microsoft Excel right 
+now, but capture and model.js output both indicate same usage & fish points.
+Testing trade sample.
+Bizzarely, this also matches. It could be that the Excel sheet had been
+modified accidentally at some point prior to tracking to make the trades 
+incorrect.
+Test case at 7000 no trades and trade sample ( see tradesample.png ) passes.
+The sample trade set is designed to stress the operations as much as I can,
+Having multiple inflows to one region, having one region be an inflow and an
+outflow at the same time, and selling more water than the location initially 
+posesses. Trade system is not yet complete, as overselling still has no checks.
