@@ -15,7 +15,11 @@ let state = {
   locationsbyposition: [],
   runoff: null,
   minflowreq: 0,
-  trades: []
+  trades: [],
+  damfund: 0,
+  damdonos: {},
+  damactive: false,
+  damheldvol: 0,
 }
 
 class Location{
@@ -71,6 +75,29 @@ function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller.tradepoints += priceperunit * volume;
   buyer.tradevol += volume;
   buyer.tradepoints -= priceperunit * volume;
+}
+
+function fundDam(funderprio, amt){
+  if(state.damactive == 1){
+    console.log("Error: Cannot fund dam that already exists.");
+    return;
+  }
+  else{
+    funder = state.locationsbypriority[funderprio-1];
+    if(funder.points < amt){
+      console.log(`Error: Points allocated (${amt}) greater than points at
+        location ${funder.name} (${funder.priority}) which owns ${funder.points}.`);
+      return;
+    }
+    funder.points -= amt;
+    state.damdonos[funderprio] ??= 0;
+    state.damdonos[funderprio] = state.damdonos[funderprio] + amt;
+    state.damfund += amt;
+    console.log(`Location ${funder.name} (${funder.priority}) successfully added
+      ${amt} to dam fund, bringing their contribution to ${state.damdonos[funderprio]}
+      of a total of ${state.damfund}.`);
+    return;
+  }
 }
 
 // Housekeeping operations that must take place before the game starts,
@@ -204,10 +231,10 @@ function initializeYear() {
 }
 
 initializeGame();
-setNewRunoff(9408);
-makeTrade(9,24,600,3);
-makeTrade(24,28,1000,9);
-makeTrade(23,24,1272,6);
-
-
+setNewRunoff(10000);
 calculateFlows();
+fundDam(10, 1000);
+fundDam(18, 400);
+fundDam(3,200);
+fundDam(10,500);
+fundDam(10,600);
