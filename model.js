@@ -12,6 +12,8 @@ const SCORETYPE = {
 // Global state table, containing important information for all of the game.
 let state = {
   year: null,
+  score: 0,
+  scorehistory: {},
   locationsbypriority: [],
   locationsbyposition: [],
   runoff: null,
@@ -24,6 +26,51 @@ let state = {
   damheldvol: 0,
   damcap: 0,
 }
+
+locations = [];
+
+// Gross but necessary initial setup of locations.
+locations.push(new Location("Pueblo Farm", 16, 1, "1803", "Farm", .80, 100))
+locations.push(new Location("Pueblo Farm", 23, 2, "1810", "Farm", .80, 200))
+locations.push(new Location("Pueblo Farm", 15, 3, "1817", "Farm", .80, 100))
+locations.push(new Location("Spanish Gold Mine", 9, 4, "1824", "Mining", .10, 100))
+locations.push(new Location("Spanish Silver Mine", 7, 5, "1831", "Mining", .10, 300))
+locations.push(new Location("Spanish Wheat Farm", 24, 6, "1838", "Farm", .80, 100))
+locations.push(new Location("Spanish Cattle Ranch", 10, 7, "1845", "Farm", .80, 400))
+locations.push(new Location("Spanish Bean Farm", 12, 8, "1852", "Farm", .80, 800))
+locations.push(new Location("Spanish Bean Farm", 25, 9, "1859", "Farm", .80, 1400))
+locations.push(new Location("Spanish Bean Farm", 28, 10, "1866", "Farm", .80, 2000))
+locations.push(new Location("Spanish Corn Farm", 20, 11, "1873", "Farm", .80, 500))
+locations.push(new Location("Spanish Copper Mine", 2, 12, "1881", "Mining", .10, 600))
+locations.push(new Location("Spanish Lumber Mill", 8, 13, "1888", "Industrial", .30, 200))
+locations.push(new Location("Spanish Cattle Ranch", 19, 14, "1895", "Farm", .80, 300))
+locations.push(new Location("Anglo Copper Mine", 4, 15, "1902", "Mining", .10, 400))
+locations.push(new Location("Anglo Wheat Farm", 26, 16, "1909", "Farm", .80, 500))
+locations.push(new Location("Cuidad Juarez, MX", 29, 17, "1916", "Urban", .20, 500))
+locations.push(new Location("Anglo Cotton Farm", 18, 18, "1923", "Farm", .80, 800))
+locations.push(new Location("Anglo Cotton Farm", 22, 19, "1930", "Farm", .80, 200))
+locations.push(new Location("Anglo Wheat Farm", 5, 20, "1937", "Farm", .80, 400))
+locations.push(new Location("Microprocessor Plant", 30, 21, "1994", "Industrial", .30, 1000))
+locations.push(new Location("Anglo Orchard", 6, 22, "1951", "Farm", .80, 300))
+locations.push(new Location("Anglo Cattle Ranch", 1, 23, "1958", "Farm", .80, 1500))
+locations.push(new Location("El Paso, TX", 27, 24, "1965", "Urban", .20, 2000))
+locations.push(new Location("Anglo Dairy Farm", 21, 25, "1972", "Farm", .80, 400))
+locations.push(new Location("Anglo Dairy Farm", 3, 26, "1979", "Farm", .80, 3000))
+locations.push(new Location("Anglo Cotton Farm", 14, 27, "1986", "Farm", .80, 300))
+locations.push(new Location("Albequerque, NM", 11, 28, "1993", "Urban", .20, 4000))
+locations.push(new Location("Anglo Organic Farm", 13, 29, "2000", "Farm", .80, 100))
+locations.push(new Location("Las Cruces, NM", 17, 30, "2007", "Urban", .20, 400))
+
+// holy moly just trust this
+
+// Two independent shallow copy list of these locations into state
+// the changes to the locations will be synced, but they're ordered
+// differently. 'locationsbypriority' is used for initial allocation
+// and 'locationsbyposition' is used for physical withdrawals.
+state.locationsbypriority = [...locations];
+state.locationsbyposition = [...locations];
+state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
+state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
 
 class Location{
   constructor(name,position,priority,year,type,percentconsumed,requested){
@@ -111,6 +158,8 @@ function fundDam(funderprio, amt){
   }
 }
 
+// Activates dam, allowing it to be used to store and release water at the beginning
+// of each year.
 function buildDam(){
   if(state.damfund == 0){
     console.log("Dam fund is empty! Fund the dam before trying to build it");
@@ -121,6 +170,7 @@ function buildDam(){
   return;
 }
 
+// Fills the dam with some of the runoff for the year.
 function fillDam(amt){
   if(amt > state.runoff - state.minflowreq){
     console.log(`Error: Can't fill dam with ${amt} from runoff of ${state.runoff}.`);
@@ -136,6 +186,8 @@ function fillDam(amt){
   return;
 }
 
+// Releases some of the stored water from the dam to add to the effective
+// runoff for the year.
 function releaseDam(amt){
   if(amt > state.damheldvol){
     console.log(`Error: Can't release ${amt} water from reserve of ${state.damheldvol}.`);
@@ -146,74 +198,6 @@ function releaseDam(amt){
   return;
 }
 
-// Housekeeping operations that must take place before the game starts,
-// as well as starting the first year.
-function initializeGame(){
-  //Set up base state
-  state.year = 0;
-  locations = []
-  //this is going to be ugly
-
-  locations.push(new Location("Pueblo Farm", 16, 1, "1803", "Farm", .80, 100))
-  locations.push(new Location("Pueblo Farm", 23, 2, "1810", "Farm", .80, 200))
-  locations.push(new Location("Pueblo Farm", 15, 3, "1817", "Farm", .80, 100))
-  locations.push(new Location("Spanish Gold Mine", 9, 4, "1824", "Mining", .10, 100))
-  locations.push(new Location("Spanish Silver Mine", 7, 5, "1831", "Mining", .10, 300))
-  locations.push(new Location("Spanish Wheat Farm", 24, 6, "1838", "Farm", .80, 100))
-  locations.push(new Location("Spanish Cattle Ranch", 10, 7, "1845", "Farm", .80, 400))
-  locations.push(new Location("Spanish Bean Farm", 12, 8, "1852", "Farm", .80, 800))
-  locations.push(new Location("Spanish Bean Farm", 25, 9, "1859", "Farm", .80, 1400))
-  locations.push(new Location("Spanish Bean Farm", 28, 10, "1866", "Farm", .80, 2000))
-  locations.push(new Location("Spanish Corn Farm", 20, 11, "1873", "Farm", .80, 500))
-  locations.push(new Location("Spanish Copper Mine", 2, 12, "1881", "Mining", .10, 600))
-  locations.push(new Location("Spanish Lumber Mill", 8, 13, "1888", "Industrial", .30, 200))
-  locations.push(new Location("Spanish Cattle Ranch", 19, 14, "1895", "Farm", .80, 300))
-  locations.push(new Location("Anglo Copper Mine", 4, 15, "1902", "Mining", .10, 400))
-  locations.push(new Location("Anglo Wheat Farm", 26, 16, "1909", "Farm", .80, 500))
-  locations.push(new Location("Cuidad Juarez, MX", 29, 17, "1916", "Urban", .20, 500))
-  locations.push(new Location("Anglo Cotton Farm", 18, 18, "1923", "Farm", .80, 800))
-  locations.push(new Location("Anglo Cotton Farm", 22, 19, "1930", "Farm", .80, 200))
-  locations.push(new Location("Anglo Wheat Farm", 5, 20, "1937", "Farm", .80, 400))
-  locations.push(new Location("Microprocessor Plant", 30, 21, "1994", "Industrial", .30, 1000))
-  locations.push(new Location("Anglo Orchard", 6, 22, "1951", "Farm", .80, 300))
-  locations.push(new Location("Anglo Cattle Ranch", 1, 23, "1958", "Farm", .80, 1500))
-  locations.push(new Location("El Paso, TX", 27, 24, "1965", "Urban", .20, 2000))
-  locations.push(new Location("Anglo Dairy Farm", 21, 25, "1972", "Farm", .80, 400))
-  locations.push(new Location("Anglo Dairy Farm", 3, 26, "1979", "Farm", .80, 3000))
-  locations.push(new Location("Anglo Cotton Farm", 14, 27, "1986", "Farm", .80, 300))
-  locations.push(new Location("Albequerque, NM", 11, 28, "1993", "Urban", .20, 4000))
-  locations.push(new Location("Anglo Organic Farm", 13, 29, "2000", "Farm", .80, 100))
-  locations.push(new Location("Las Cruces, NM", 17, 30, "2007", "Urban", .20, 400))
-
-  // holy moly just trust this
-
-  // Two independent shallow copy list of these locations into state
-  // the changes to the locations will be synced, but they're ordered
-  // differently. 'locationsbypriority' is used for initial allocation
-  // and 'locationsbyposition' is used for physical withdrawals.
-  state.locationsbypriority = [...locations];
-  state.locationsbyposition = [...locations];
-  state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
-  state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
-
-}
-
-// Calculate scores. This should only be called from calculateFlows(), and for testing.
-function updateScore(remainingflow){
-
-  globalpoints = 0;
-  usagepoints = 0;
-  fishpoints = 10*remainingflow;
-  for(location of state.locationsbypriority){
-    location.points = location.withdrawn * SCORETYPE[location.type] + location.tradepoints;
-    usagepoints += location.points;
-  }
-  globalpoints = Math.round(usagepoints + fishpoints)
-  console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
-   `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
-
-}
-
 // This function takes the rules and trades that the players have
 // set forth in their interaction with the game and calculates the
 // throughput and usage of every location in the game based on the
@@ -221,7 +205,6 @@ function updateScore(remainingflow){
 // priority-based flow model to determine each location's "lot" of
 // the water, and then a physical model that relies on position to
 // actually dole out the water.
-
 function calculateFlows(){
 
   state.currentwaterflow = state.runoff;
@@ -260,26 +243,61 @@ function calculateFlows(){
   updateScore(state.currentwaterflow);
 }
 
+// Calculate scores.
+function updateScore(remainingflow){
+
+  globalpoints = 0;
+  usagepoints = 0;
+  fishpoints = 10*remainingflow;
+  for(location of state.locationsbypriority){
+    location.points = location.withdrawn * SCORETYPE[location.type] + location.tradepoints;
+    usagepoints += location.points;
+  }
+  globalpoints = Math.round(usagepoints + fishpoints)
+  console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
+   `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
+
+}
+
+// Add score and runoff to score history and card.
+function submitScore(score){
+  if(state.year != 0){
+    scorehistory[state.year] = (state.initrunoff, score);
+  }
+  return;
+}
+
+// Set the game to play from the first year. This resets all state values
+// and destroys the scoring history.
+function initializeGame(){
+  state.year = 0;
+  state.score = 0;
+  state.scorehistory = [];
+  state.runoff = 0;
+  state.initrunoff = 0;
+  state.minflowreq = 0;
+  state.trades = [];
+  state.damfund = 0;
+  state.damactive = false;
+  state.damheldvol = 0;
+  state.damcap = 0;
+}
+
 // This function handles the state information changes that
 // occur when a year passes from one to the other.
-
 // The original game has this step entail several things: 
 // - Initialize new runoff.
 // - Prompt users to interact with the dam (if a dam exists)
 // - Record the previous year's final scoring output in history
 // - Clear previous year information (other than score and
 //      dam info
-function initializeYear() {
+function passYear() {
+  submitScore(state.score);
   year += 1;
-  state.runoff = getNewRunoff();
   state.trades = [];
+  state.runoff = setNewRunoff();
 }
 
 initializeGame();
-setNewRunoff(10000);
-calculateFlows();
-fundDam(10, 1000);
-fundDam(18, 400);
-fundDam(3,200);
-fundDam(10,500);
-fundDam(10,600);
+passYear();
+setNewRunoff(7000);

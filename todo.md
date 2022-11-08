@@ -7,7 +7,7 @@
 - [X] Implement the option to trade
 - [X] Incorporate trading into scoring
 - [ ] Resolve trading beyond limits
-- [ ] Move from year to year
-- [ ] Build a dam
-- [ ] Release and store damwater in flow manipulation
+- [X] Move from year to year
+- [X] Build a dam
+- [X] Release and store damwater in flow manipulation
 - [ ] "Grade" based on defined grade curves
