@@ -27,6 +27,28 @@ let state = {
   damcap: 0,
 }
 
+class Location{
+  constructor(name,position,priority,year,type,percentconsumed,requested){
+    this.name = name;
+    this.position = position;
+    this.priority = priority;
+    this.year = year;
+    this.type = type;
+    this.percentconsumed = percentconsumed;
+    this.requested = requested
+    this.allotted = 0;
+    this.withdrawn = 0;
+    this.points = 0;
+    this.tradevol = 0;
+    this.tradepoints = 0;
+    
+  }
+  // These are static so they can probably be stored in a .json file somewhere and
+  // Restored if push comes to shove, though I'd like to avoid doing so considering
+  // graphics need to be done down the line.
+}
+
+
 locations = [];
 
 // Gross but necessary initial setup of locations.
@@ -72,27 +94,6 @@ state.locationsbyposition = [...locations];
 state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
 state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
 
-class Location{
-  constructor(name,position,priority,year,type,percentconsumed,requested){
-    this.name = name;
-    this.position = position;
-    this.priority = priority;
-    this.year = year;
-    this.type = type;
-    this.percentconsumed = percentconsumed;
-    this.requested = requested
-    this.allotted = 0;
-    this.withdrawn = 0;
-    this.points = 0;
-    this.tradevol = 0;
-    this.tradepoints = 0;
-    
-  }
-  // These are static so they can probably be stored in a .json file somewhere and
-  // Restored if push comes to shove, though I'd like to avoid doing so considering
-  // graphics need to be done down the line.
-}
-
 // This class contains the information necessary to keep track of trades in the 
 // trades table.
 class Trade{
@@ -117,12 +118,17 @@ function setNewRunoff(setval = -1){
     state.runoff = setval;
     state.initrunoff = state.runoff;
   }
+  calculateFlows();
 }
 
 // Make and register a trade.
 function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller = state.locationsbypriority[sellerprio-1];
   buyer = state.locationsbypriority[buyerprio-1];
+  if(volume > Math.min((buyer.requested - buyer.withdrawn), seller.withdrawn)){
+    console.log(`Trade of ${amount} above max of buyer defecit 
+      ${buyer.requested - buyer.withdrawn} or above seller withdrawable ${seller.withdrawn}.`);
+  }
   console.log(`${seller.name} (${seller.priority}) sells 
     ${volume} ac-ft of water to ${buyer.name} (${buyer.priority})
     at ${priceperunit} per ac-ft, for a total of ${volume * priceperunit}.`);
@@ -131,6 +137,7 @@ function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller.tradepoints += priceperunit * volume;
   buyer.tradevol += volume;
   buyer.tradepoints -= priceperunit * volume;
+  calculateFlows();
 }
 
 // A single player puts points forth towards the construction of a dam.
@@ -195,6 +202,7 @@ function releaseDam(amt){
   }
   state.runoff += amt;
   state.damheldvol -= amt;
+  calculateFlows();
   return;
 }
 
@@ -293,7 +301,7 @@ function initializeGame(){
 //      dam info
 function passYear() {
   submitScore(state.score);
-  year += 1;
+  state.year += 1;
   state.trades = [];
   state.runoff = setNewRunoff();
 }
