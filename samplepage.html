@@ -1,19 +1,206 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sample App Page</title>
-
+        <title>Water Game</title>
+        <link rel="stylesheet" href="styling.css">
 
     </head>
+
     <body>
 
-	<div id="like_button_container"></div>
-
-
-    <!-- These next two load react. Remember to change these two to the minified version in prod. -->
+    <!-- These next two load react. Remember to change these two to the minified version in prod. 
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-
+    -->
     <!-- Load custom components as script tags here. -->    
+    <script src="model.js"></script>
+    <div id="game">
+        <div id="header">
+            <div id="afy-container">
+                <div id="acrefeet-label">
+                    ACRE-FEET
+                </div>
+                <div id="year-display">
+                    Year 0
+                </div>
+            </div>
+            <div id="acrefeet-display">
+                7000
+            </div>
+            <button id="flow-button" class="header-button">
+                Initialize Annual River Flow
+            </button>
+            <button id="reset-button" class="header-button">
+                Reset to Year 0
+            </button>
+            <div id="title-label">
+                WATER GAME
+            </div>
+            <div id="points-display">
+                POINTSGOHERE
+            </div>
+            <div id="head-corner-decoration"></div>
+        </div>
+        <div id="game-field">
+            <div id="info-panel-container">
+                <button class="info-button">WATER MANAGEMENT OPTIONS</button>
+                <div id="scoreboard-container">
+                    <div id="scoreboard-label">SCORE BOARD</div>
+                    <div id="scoreboard-display">
+                        <table>
+                            <tr>
+                                <th class="normalcol">PLAYER</th>
+                                <th class="normalcol">WITHDRAW REQUEST</th>
+                                <th class="normalcol">POINTS</th>
+                                <th class="nullcol"></th>
+                                <th class="normalcol">PLAYER</th>
+                                <th class="normalcol">WITHDRAW REQUEST</th>
+                                <th class="normalcol">POINTS</th>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                            <tr>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                                <td></td>
+                                <td>player</td>
+                                <td>withdraw</td>
+                                <td>points</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <button class="info-button">VIEW DATA OPTIONS</button>
+                <div id="use-points-graph">USEPOINTSGRAPHGOESHERE</div>
+            </div>
+            <div id="visualizer-panel-container">
+            </div>
+        </div>
+    </div>
     </body>
 </html>
