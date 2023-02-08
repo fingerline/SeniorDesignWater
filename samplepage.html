@@ -43,7 +43,14 @@
         </div>
         <div id="game-field">
             <div id="info-panel-container">
-                <button class="info-button">WATER MANAGEMENT OPTIONS</button>
+                <div class="dropdown">
+                    <button class="info-button" onclick="unfoldManagementOptions()">WATER MANAGEMENT OPTIONS</button> 
+                    <div id="management-options" class="dropdown-content">
+                        <a href="#" onclick="minFlowReqPrompt()" >Minimum Flow Requirement</a>
+                        <a href="#" onclick="tradePrompt()">Trade</a>
+                        <a href="#" onclick="damPrompt()">Build A Dam</a>
+                    </div>                
+                </div>
                 <div id="scoreboard-container">
                     <div id="scoreboard-label">SCORE BOARD</div>
                     <div id="scoreboard-display">
@@ -195,7 +202,14 @@
                         </table>
                     </div>
                 </div>
-                <button class="info-button">VIEW DATA OPTIONS</button>
+                <div class ="dropdown">
+                    <button class="info-button" onclick="unfoldDataOptions()">VIEW DATA OPTIONS</button>
+                    <div id="data-options" class="dropdown-content">
+                        <a href="#">VIEW TRADING DATA</a>
+                        <a href="#">VIEW DAM DATA</a>
+                        <a href="#">VIEW SCORING DATA</a>
+                    </div>
+                </div>
                 <div id="use-points-graph">USEPOINTSGRAPHGOESHERE</div>
             </div>
             <div id="visualizer-panel-container">

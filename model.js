@@ -337,10 +337,27 @@ function resetGame() {
   state.damactive = false;
   state.damheldvol = 0;
   state.damcap = 0;
+  state.minflowreq = 0;
   setNewRunoff(7000);
   calculateFlows();
   updateVisible();
+}
 
+function unfoldManagementOptions(){
+  document.getElementById("management-options").classList.toggle("showDrop");
+}
+
+function unfoldDataOptions(){
+  document.getElementById("data-options").classList.toggle("showDrop");
+}
+
+function minFlowReqPrompt(){
+  let minflowanswer = prompt("Minimum Flow Requirement (ac-ft)");
+  if(/^[0-9]*$/.test(minflowanswer)){
+    state.minflowreq = minflowanswer;
+    calculateFlows();
+    updateVisible();
+  }
 }
 
 initializeGame();
