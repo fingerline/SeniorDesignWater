@@ -27,6 +27,39 @@ let state = {
   damcap: 0,
 }
 
+class Location{
+  constructor(name,position,priority,year,type,percentconsumed,requested){
+    this.name = name;
+    this.position = position;
+    this.priority = priority;
+    this.year = year;
+    this.type = type;
+    this.percentconsumed = percentconsumed;
+    this.requested = requested
+    this.allotted = 0;
+    this.withdrawn = 0;
+    this.points = 0;
+    this.tradevol = 0;
+    this.tradepoints = 0;
+    
+  }
+  // These are static so they can probably be stored in a .json file somewhere and
+  // Restored if push comes to shove, though I'd like to avoid doing so considering
+  // graphics need to be done down the line.
+}
+
+// This class contains the information necessary to keep track of trades in the 
+// trades table.
+class Trade{
+  constructor(player1, player2, volume, priceperunit){
+    this.player1 = player1;
+    this.player2 = player2;
+    this.volume = volume;
+    this.priceperunit = priceperunit;
+    this.price = volume * priceperunit;
+  }
+}
+
 locations = [];
 
 // Gross but necessary initial setup of locations.
@@ -71,39 +104,6 @@ state.locationsbypriority = [...locations];
 state.locationsbyposition = [...locations];
 state.locationsbypriority.sort((a,b) => (a.priority > b.priority) ? 1 : -1);
 state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
-
-class Location{
-  constructor(name,position,priority,year,type,percentconsumed,requested){
-    this.name = name;
-    this.position = position;
-    this.priority = priority;
-    this.year = year;
-    this.type = type;
-    this.percentconsumed = percentconsumed;
-    this.requested = requested
-    this.allotted = 0;
-    this.withdrawn = 0;
-    this.points = 0;
-    this.tradevol = 0;
-    this.tradepoints = 0;
-    
-  }
-  // These are static so they can probably be stored in a .json file somewhere and
-  // Restored if push comes to shove, though I'd like to avoid doing so considering
-  // graphics need to be done down the line.
-}
-
-// This class contains the information necessary to keep track of trades in the 
-// trades table.
-class Trade{
-  constructor(player1, player2, volume, priceperunit){
-    this.player1 = player1;
-    this.player2 = player2;
-    this.volume = volume;
-    this.priceperunit = priceperunit;
-    this.price = volume * priceperunit;
-  }
-}
 
 // Generate new runoff.
 function setNewRunoff(setval = -1){
@@ -210,34 +210,34 @@ function calculateFlows(){
   state.currentwaterflow = state.runoff;
 
   //initial theoretical cycle
-  for(location of state.locationsbypriority){
+  for(loc of state.locationsbypriority){
 
     // console.log(`Loc ${location.priority}@${location.position}:`)
     // console.log(`\tInflow:${state.currentwaterflow.toFixed(2)}`)
     // console.log(`\tRequested:${location.requested.toFixed(2)}`)
     //theoretical inflow
-    location.allotted = Math.max(0, Math.min(location.requested,
+    loc.allotted = Math.max(0, Math.min(loc.requested,
      state.currentwaterflow - state.minflowreq));
     // console.log(`\tAllottment:${location.allotted.toFixed(2)}`);
-    state.currentwaterflow -= location.allotted;
+    state.currentwaterflow -= loc.allotted;
     
     //calculate t.consumption into outflow
-    state.currentwaterflow += (location.allotted * (1 - location.percentconsumed));
+    state.currentwaterflow += (loc.allotted * (1 - loc.percentconsumed));
     // console.log(`\tOutflow:${state.currentwaterflow.toFixed(2)}`);
   }
 
   //ending physical cycle
   state.currentwaterflow = state.runoff;
 
-  for(location of state.locationsbyposition){
+  for(loc of state.locationsbyposition){
     // console.log(`Loc ${location.priority}@${location.position}:`);
     // console.log(`\tInflow: ${state.currentwaterflow.toFixed(2)}`);
     // console.log(`\tAlotted: ${location.allotted.toFixed(2)}`);
     // console.log(`\tTradeflow: ${location.tradevol.toFixed(2)}`);
-    location.withdrawn = Math.min(state.currentwaterflow,
-     location.allotted + location.tradevol);
+    loc.withdrawn = Math.min(state.currentwaterflow,
+     loc.allotted + loc.tradevol);
     // console.log(`\t!!Withdrawn: ${location.withdrawn.toFixed(2)}`);
-    state.currentwaterflow -= (location.withdrawn * (location.percentconsumed));
+    state.currentwaterflow -= (loc.withdrawn * (loc.percentconsumed));
     // console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
   }
   updateScore(state.currentwaterflow);
@@ -248,21 +248,22 @@ function updateScore(remainingflow){
 
   globalpoints = 0;
   usagepoints = 0;
-  fishpoints = 10*remainingflow;
-  for(location of state.locationsbypriority){
-    location.points = location.withdrawn * SCORETYPE[location.type] + location.tradepoints;
-    usagepoints += location.points;
+  fishpoints = Math.min(10*remainingflow, 20000);
+  for(loc of state.locationsbypriority){
+    loc.points = loc.withdrawn * SCORETYPE[loc.type] + loc.tradepoints;
+    usagepoints += loc.points;
   }
   globalpoints = Math.round(usagepoints + fishpoints)
   console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
    `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
+  state.score = globalpoints;
 
 }
 
 // Add score and runoff to score history and card.
 function submitScore(score){
   if(state.year != 0){
-    scorehistory[state.year] = (state.initrunoff, score);
+    state.scorehistory[state.year] = (state.initrunoff, score);
   }
   return;
 }
@@ -283,6 +284,26 @@ function initializeGame(){
   state.damcap = 0;
 }
 
+function updateVisible() {
+  let table = document.getElementById("scoretable");
+  for(let i = 1; i < 16; i++){
+    firstloc = state.locationsbypriority[i-1];
+    secondloc = state.locationsbypriority[i+14];
+    table.rows[i].innerHTML = `
+        <td class="normalcol ${firstloc.type}">${firstloc.priority}</td>
+        <td class="normalcol ${firstloc.type}">${firstloc.requested}</td>
+        <td class="normalcol ${firstloc.type}">${Math.round(firstloc.points)}</td>
+        <td class="nullcol"></td>
+        <td class="normalcol ${secondloc.type}">${secondloc.priority}</td>
+        <td class="normalcol ${secondloc.type}">${secondloc.requested}</td>
+        <td class="normalcol ${secondloc.type}">${Math.round(secondloc.points)}</td>
+    `;
+  }
+  document.getElementById("points-display").innerHTML = state.score;
+  document.getElementById("year-display").innerHTML = `Year ${state.year}`;
+  document.getElementById("acrefeet-display").innerHTML = state.initrunoff;
+}
+
 // This function handles the state information changes that
 // occur when a year passes from one to the other.
 // The original game has this step entail several things: 
@@ -293,11 +314,32 @@ function initializeGame(){
 //      dam info
 function passYear() {
   submitScore(state.score);
-  year += 1;
+  state.year += 1;
   state.trades = [];
-  state.runoff = setNewRunoff();
+  setNewRunoff();
+  calculateFlows();
+  updateVisible();
+}
+
+function resetGame() {
+  state.year = 0;
+  state.trades = [];
+  state.scorehistory = {};
+  state.damfund = 0;
+  state.damdonos = {};
+  state.damactive = false;
+  state.damheldvol = 0;
+  state.damcap = 0;
+  setNewRunoff(7000);
+  calculateFlows();
+  updateVisible();
+
 }
 
 initializeGame();
-passYear();
 setNewRunoff(7000);
+calculateFlows();
+
+window.onload = function() {
+  updateVisible()
+}

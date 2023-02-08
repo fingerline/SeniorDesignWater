@@ -27,10 +27,10 @@
             <div id="acrefeet-display">
                 7000
             </div>
-            <button id="flow-button" class="header-button">
+            <button id="flow-button" class="header-button" onclick="passYear()">
                 Initialize Annual River Flow
             </button>
-            <button id="reset-button" class="header-button">
+            <button id="reset-button"  class="header-button" onclick="resetGame()">
                 Reset to Year 0
             </button>
             <div id="title-label">
@@ -47,17 +47,17 @@
                 <div id="scoreboard-container">
                     <div id="scoreboard-label">SCORE BOARD</div>
                     <div id="scoreboard-display">
-                        <table>
+                        <table id="scoretable">
                             <tr>
                                 <th class="normalcol">PLAYER</th>
-                                <th class="normalcol">WITHDRAW REQUEST</th>
+                                <th class="normalcol smallcell">WITHDRAW REQUEST</th>
                                 <th class="normalcol">POINTS</th>
                                 <th class="nullcol"></th>
                                 <th class="normalcol">PLAYER</th>
-                                <th class="normalcol">WITHDRAW REQUEST</th>
+                                <th class="normalcol smallcell">WITHDRAW REQUEST</th>
                                 <th class="normalcol">POINTS</th>
                             </tr>
-                            <tr>
+                            <tr id="player1_16">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -66,7 +66,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player2_17">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -75,7 +75,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player3_18">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -84,7 +84,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player4_19">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -93,7 +93,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player5_20">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -102,7 +102,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player6_21">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -111,7 +111,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player7_22">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -120,7 +120,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player8_23">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -129,7 +129,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player9_24">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -138,7 +138,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player10_25">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -147,7 +147,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player11_26">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -156,7 +156,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player12_27">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -165,7 +165,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player13_28">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -174,7 +174,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player14_29">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>
@@ -183,7 +183,7 @@
                                 <td>withdraw</td>
                                 <td>points</td>
                             </tr>
-                            <tr>
+                            <tr id="player15_30">
                                 <td>player</td>
                                 <td>withdraw</td>
                                 <td>points</td>

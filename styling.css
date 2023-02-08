@@ -136,12 +136,33 @@ th, tr {
     font-size: small;
 }
 
-th:nth-child(even){
+td {
+    text-align: right;
+    padding-right: 5px;
+}
+
+.smallcell{
     font-size: x-small;
 }
 
 
 td {
     text-align: right;
+}
+
+.Farm {
+    background-color: #8dc63f;
+}
+
+.Industrial {
+    background-color: #99ffff;
+}
+
+.Urban {
+    background-color: #e78ab9;
+}
+
+.Mining {
+    background-color: #db9b3e;
 }
 
