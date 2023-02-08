@@ -117,12 +117,17 @@ function setNewRunoff(setval = -1){
     state.runoff = setval;
     state.initrunoff = state.runoff;
   }
+  calculateFlows();
 }
 
 // Make and register a trade.
 function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller = state.locationsbypriority[sellerprio-1];
   buyer = state.locationsbypriority[buyerprio-1];
+  if(volume > Math.min((buyer.requested - buyer.withdrawn), seller.withdrawn)){
+    console.log(`Trade of ${amount} above max of buyer defecit 
+      ${buyer.requested - buyer.withdrawn} or above seller withdrawable ${seller.withdrawn}.`);
+  }
   console.log(`${seller.name} (${seller.priority}) sells 
     ${volume} ac-ft of water to ${buyer.name} (${buyer.priority})
     at ${priceperunit} per ac-ft, for a total of ${volume * priceperunit}.`);
@@ -131,6 +136,7 @@ function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller.tradepoints += priceperunit * volume;
   buyer.tradevol += volume;
   buyer.tradepoints -= priceperunit * volume;
+  calculateFlows();
 }
 
 // A single player puts points forth towards the construction of a dam.
@@ -195,6 +201,7 @@ function releaseDam(amt){
   }
   state.runoff += amt;
   state.damheldvol -= amt;
+  calculateFlows();
   return;
 }
 
