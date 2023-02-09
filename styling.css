@@ -177,12 +177,15 @@ body {
 }
 
 #scoreboard-display {
+    flex-grow: 1;
+    align-self: stretch;
     height: 90%;
+    margin: 0px 10px 20px 10px;
 }
 #scoreboard-display table {
     border: 2px solid black;
     border-collapse: collapse;
-    width: 380px;
+    width: 100%;
     height: 100%;
 }
 
