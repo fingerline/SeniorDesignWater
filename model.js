@@ -343,6 +343,7 @@ function resetGame() {
   updateVisible();
 }
 
+//HTML/CSS FUNCTIONS FROM HERE OUT
 function unfoldManagementOptions(){
   document.getElementById("management-options").classList.toggle("showDrop");
 }
@@ -359,6 +360,36 @@ function minFlowReqPrompt(){
     updateVisible();
   }
 }
+
+function tradePrompt(){
+  alert("This functionality coming soon! Popup forms require UI library.")
+}
+
+function damPrompt(){
+  alert("This functionality coming soon! Popup forms require UI library.")
+}
+
+function viewTradingData(){
+  alert("This functionality coming soon! Movable windows require UI library.")
+}
+
+function viewDamData(){
+  alert("This functionality coming soon! Movable windows require UI library.")
+}
+
+function viewScoringData(){
+  alert("This functionality coming soon! Movable, scalable windows require UI library.")
+}
+
+function saveGame(){
+  alert("This functionality coming soon! Saves will use a .json file.")
+}
+
+function loadGame(){
+  alert("This functionality coming soon! Saves will use a .json file.")
+}
+
+//BASE GAME SETUP
 
 initializeGame();
 setNewRunoff(7000);

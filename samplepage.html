@@ -30,7 +30,7 @@
             <button id="flow-button" class="header-button" onclick="passYear()">
                 Initialize Annual River Flow
             </button>
-            <button id="reset-button"  class="header-button" onclick="resetGame()">
+            <button id="reset-button" class="header-button" onclick="resetGame()">
                 Reset to Year 0
             </button>
             <div id="title-label">
@@ -39,6 +39,12 @@
             <div id="points-display">
                 POINTSGOHERE
             </div>
+            <button id="save-button" class="header-button" onclick="saveGame()">
+                Save Game
+            </button>
+            <button id="load-button" class="header-button" onclick="loadGame()">
+                Load Game
+            </button>
             <div id="head-corner-decoration"></div>
         </div>
         <div id="game-field">
@@ -205,14 +211,21 @@
                 <div class ="dropdown">
                     <button class="info-button" onclick="unfoldDataOptions()">VIEW DATA OPTIONS</button>
                     <div id="data-options" class="dropdown-content">
-                        <a href="#">VIEW TRADING DATA</a>
-                        <a href="#">VIEW DAM DATA</a>
-                        <a href="#">VIEW SCORING DATA</a>
+                        <a href="#" onclick="viewTradingData()">VIEW TRADING DATA</a>
+                        <a href="#" onclick="viewDamData()">VIEW DAM DATA</a>
+                        <a href="#" onclick="viewScoringData()">VIEW SCORING DATA</a>
                     </div>
                 </div>
-                <div id="use-points-graph">USEPOINTSGRAPHGOESHERE</div>
+                <div id="use-points-graph">[Use Points Graph will be placed here.<br></o> 
+                    This needs to be drawn using the 2D graphics library.]</div>
             </div>
             <div id="visualizer-panel-container">
+                <div id="visualizer-text">
+                    [This is where the river visualization will be located.<br>
+                    This is slated to be accomplished using two.js, with splines<br>
+                    rather than drawing out many rectangles on top of a curve.<br>
+                    this will look different than the original, but hopefully better.]
+                </div>
             </div>
         </div>
     </div>

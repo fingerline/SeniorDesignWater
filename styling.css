@@ -60,6 +60,17 @@ body {
     width: 77px;
 }
 
+#save-button {
+    width: 60px;
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+#load-button {
+    width: 60px;
+    margin-right: 30px;
+}
+
 #title-label {
     display: flex;
     justify-content: center;
@@ -73,10 +84,12 @@ body {
 #points-display {
     margin: 8px;
     background-color: yellow;
+    border: 2px solid black;
 }
 
 #game-field {
     background-color: #F2E1D4;
+    display:flex;
     height: 100%;
     width: 100%;
 }
@@ -84,6 +97,18 @@ body {
 #info-panel-container {
     width: 396px;
     height: 100%;
+    padding:3px;
+}
+
+#visualizer-panel-container {
+    display: flex;
+    flex:1;
+    justify-content: center;
+    align-items: center;
+}
+
+#visualizer-text {
+    text-align: center;
 }
 
 .info-button {
@@ -99,7 +124,6 @@ body {
 
 .dropdown{
     font-weight: bold;
-    margin: 3px;
     display: inline-block;
     position: relative;
     min-width: fit-content;
@@ -141,7 +165,7 @@ body {
     align-items: center;
     height: 477px;
     width: 390px;
-    margin: 3px;
+    margin: 3px 0px;
     border-radius: 6px;
 }
 
