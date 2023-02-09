@@ -397,7 +397,12 @@ calculateFlows();
 
 window.onload = function() {
   updateVisible();
-  $( "scoreboard-container" ).draggable();
+  $( "#scoreboard-container" ).resizable({
+
+
+    minHeight: 477,
+    minWidth: 390
+  });
 }
 
 //JQUERY??
