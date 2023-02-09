@@ -396,5 +396,8 @@ setNewRunoff(7000);
 calculateFlows();
 
 window.onload = function() {
-  updateVisible()
+  updateVisible();
+  $( "scoreboard-container" ).draggable();
 }
+
+//JQUERY??
