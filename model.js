@@ -362,7 +362,8 @@ function minFlowReqPrompt(){
 }
 
 function tradePrompt(){
-  alert("This functionality coming soon! Popup forms require UI library.")
+  console.log('opening trade prompt');
+  $("#trade-form").dialog("open");
 }
 
 function damPrompt(){
@@ -370,15 +371,15 @@ function damPrompt(){
 }
 
 function viewTradingData(){
-  alert("This functionality coming soon! Movable windows require UI library.")
+  alert("This functionality coming soon!")
 }
 
 function viewDamData(){
-  alert("This functionality coming soon! Movable windows require UI library.")
+  alert("This functionality coming soon!")
 }
 
 function viewScoringData(){
-  alert("This functionality coming soon! Movable, scalable windows require UI library.")
+  alert("This functionality coming soon!")
 }
 
 function saveGame(){
@@ -389,6 +390,8 @@ function loadGame(){
   alert("This functionality coming soon! Saves will use a .json file.")
 }
 
+
+
 //BASE GAME SETUP
 
 initializeGame();
@@ -397,12 +400,43 @@ calculateFlows();
 
 window.onload = function() {
   updateVisible();
+
+  function trade(){
+    const answers = $("#trade-form-info").serializeArray();
+    const seller = answers[0].value;
+    const buyer = answers[1].value;
+    const volume = answers[2].value;
+    const price = answers[3].value;
+    console.log(`seller: ${seller}, buyer: ${buyer}, volume: ${volume}, price: ${price}`);
+    if(!/^[0-9]*$/.test(volume) || volume == ""){
+      $("#trade-warning").text("Volume must be an integer!");
+      return
+    }
+    if(seller == buyer){
+      $("#trade-warning").text("Buyer must be different from seller!");
+      return
+    }
+    else{
+      $("#trade-warning").text("");
+      console.log("successful trade");
+      tradeform.dialog("close");
+    }
+  }
+
   $( "#scoreboard-container" ).resizable({
-
-
     minHeight: 477,
     minWidth: 390
   });
-}
 
-//JQUERY??
+  tradeform = $( "#trade-form").dialog({
+    autoOpen: false,
+    modal: true,
+    width: 'auto',
+    buttons: {
+      "Trade!": trade,  
+    },
+
+  });
+
+  
+}

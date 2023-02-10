@@ -116,6 +116,7 @@ body {
     font-weight: bold;
     border-width: 2px;
     font-size: medium;
+    margin: 10px 0px 0px 0px;
 }
 
 .info-button:hover {
@@ -158,6 +159,22 @@ body {
     display:block
 }
 
+fieldset {
+    display:flex;
+    border:none;
+}
+
+.form-input-container {
+    display:flex;
+    flex-direction: column;
+    margin: 5px 10px;
+}
+
+#trade-warning {
+    text-align: center;
+    color: red;
+}
+
 #scoreboard-container {
     background-color: #FBF49A;
     display: flex;
@@ -165,7 +182,7 @@ body {
     align-items: center;
     height: 477px;
     width: 390px;
-    margin: 3px 0px;
+    margin: 10px 0px 5px 0px;
     border-radius: 6px;
 }
 
