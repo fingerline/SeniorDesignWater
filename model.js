@@ -134,6 +134,7 @@ function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   state.trades.push(new Trade(seller.priority, buyer.priority, volume, priceperunit));
   seller.tradevol -= volume;
   seller.tradepoints += priceperunit * volume;
+  console.log(`typeof buyer.tradevol: ${typeof buyer.tradevol} typeof volume = ${typeof volume}`);
   buyer.tradevol += volume;
   buyer.tradepoints -= priceperunit * volume;
   calculateFlows();
@@ -257,6 +258,9 @@ function updateScore(remainingflow){
   usagepoints = 0;
   fishpoints = Math.min(10*remainingflow, 20000);
   for(loc of state.locationsbypriority){
+    if(loc.priority == 23){
+      console.log(`Location 23: withdrawn: ${loc.withdrawn} trade volume: ${loc.tradevol}`);
+    }
     loc.points = loc.withdrawn * SCORETYPE[loc.type] + loc.tradepoints;
     usagepoints += loc.points;
   }
@@ -353,12 +357,8 @@ function unfoldDataOptions(){
 }
 
 function minFlowReqPrompt(){
-  let minflowanswer = prompt("Minimum Flow Requirement (ac-ft)");
-  if(/^[0-9]*$/.test(minflowanswer)){
-    state.minflowreq = minflowanswer;
-    calculateFlows();
-    updateVisible();
-  }
+  console.log('opening minflow prompt');
+  $("#minflow-form").dialog("open");
 }
 
 function tradePrompt(){
@@ -366,8 +366,33 @@ function tradePrompt(){
   $("#trade-form").dialog("open");
 }
 
+function contributeDam(){
+  console.log("Attempting to contribute.");
+  const response = $("#build-dam-form-info").serializeArray();
+  let player = response[0].value;
+  let points = response[1].value
+  if(!/^[0-9]*$/.test(points) || points == ""){
+    $("#build-dam-warning").text("Contribution amount must be an integer!");
+    return
+  }
+  points = parseInt(points);
+  playerpoints = state.locationsbypriority[player-1].points;
+  console.log(`Player ${player} has ${playerpoints} and attempts to contribute ${points}.`);
+  if(points > playerpoints){
+    $("#build-dam-warning").text(`Player ${player} can only contribute up to ${playerpoints} points!`);
+    return
+  }
+  else{
+    console.log("Legal contribution.");
+    fundDam(player,points);
+    updateVisible();
+  }
+
+}
+
 function damPrompt(){
-  alert("This functionality coming soon! Popup forms require UI library.")
+  console.log('opening dam prompt');
+  $("#build-dam-form").dialog("open");
 }
 
 function viewTradingData(){
@@ -403,24 +428,70 @@ window.onload = function() {
 
   function trade(){
     const answers = $("#trade-form-info").serializeArray();
+    console.log(answers);
     const seller = answers[0].value;
     const buyer = answers[1].value;
-    const volume = answers[2].value;
-    const price = answers[3].value;
+    let volume = answers[2].value;
+    let price = answers[3].value;
+    const sellerloc = state.locationsbypriority[seller-1];
+    const buyerloc = state.locationsbypriority[buyer-1]
     console.log(`seller: ${seller}, buyer: ${buyer}, volume: ${volume}, price: ${price}`);
+    console.log(`Seller has ${sellerloc.withdrawn} to sell, Buyer has ${buyerloc.requested-buyerloc.withdrawn} to buy max with ${buyerloc.points} points.`);
     if(!/^[0-9]*$/.test(volume) || volume == ""){
       $("#trade-warning").text("Volume must be an integer!");
       return
     }
+    if(!/^[0-9]*$/.test(price) || price == ""){
+      $("#trade-warning").text("Price must be an integer!");
+      return
+    }
+    volume = parseInt(volume);
+    price = parseInt(price);
     if(seller == buyer){
       $("#trade-warning").text("Buyer must be different from seller!");
       return
     }
+    if(volume > (buyerloc.requested - buyerloc.withdrawn)){
+      $("#trade-warning").text(`Player ${buyer} can only withdraw ${Math.round(buyerloc.requested - buyerloc.withdrawn)} ac-ft more!`);
+      return
+    }
+    if(volume > sellerloc.withdrawn){
+      $("#trade-warning").text(`Player ${seller} can only sell ${Math.round(sellerloc.withdrawn)} ac-ft!`)
+      return
+    }
+    if(buyerloc.points < (volume*price)){
+      $("#trade-warning").text(`Transaction comes to ${volume*price} points, and buyer ${buyer} only has ${Math.round(buyerloc.points)} points!`)
+      return
+    }
     else{
       $("#trade-warning").text("");
-      console.log("successful trade");
+      console.log("valid trade");
+      makeTrade(seller, buyer, volume, price);
+      updateVisible();
       tradeform.dialog("close");
     }
+  }
+
+  function updateMinFlowReq(){
+    let answer = $( "#minflow-form-info" ).serializeArray()[0].value;
+    console.log(answer);
+    if(/^[0-9]*$/.test(answer)){
+      console.log(`Setting MinFlowReq to ${answer}`)
+      $("#minflow-warning").text("");
+      state.minflowreq = parseInt(answer);
+      calculateFlows();
+      updateVisible();
+      minflowform.dialog("close");
+    }
+    else{
+      console.log(`Bad minflow input: ${answer}`);
+      $( "#minflow-warning" ).text("Minimum flow must be a non-negative integer.");
+      return
+    }
+  }
+
+  function damBuildButton(){
+    console.log("placeholder");
   }
 
   $( "#scoreboard-container" ).resizable({
@@ -428,12 +499,32 @@ window.onload = function() {
     minWidth: 390
   });
 
-  tradeform = $( "#trade-form").dialog({
+  tradeform = $( "#trade-form" ).dialog({
     autoOpen: false,
     modal: true,
     width: 'auto',
     buttons: {
       "Trade!": trade,  
+    },
+
+  });
+
+  minflowform = $( "#minflow-form" ).dialog({
+    autoOpen: false,
+    modal: true,
+    width: 'auto',
+    buttons: {
+      "Submit": updateMinFlowReq,  
+    },
+
+  });
+
+  builddamform = $( "#build-dam-form" ).dialog({
+    autoOpen: false,
+    modal: true,
+    width: 'auto',
+    buttons: {
+      "Build A Dam": damBuildButton,  
     },
 
   });

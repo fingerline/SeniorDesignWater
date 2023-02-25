@@ -11,3 +11,10 @@
 - [X] Build a dam
 - [X] Release and store damwater in flow manipulation
 - [ ] "Grade" based on defined grade curves
+
+## Enhancements
+
+- [ ] Allow user to see minflow at all times
+- [ ] Save/Load using .json.
+- [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
+- [ ] Round at earlier steps, keeping relative accuracy

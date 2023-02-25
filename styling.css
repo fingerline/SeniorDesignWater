@@ -170,7 +170,7 @@ fieldset {
     margin: 5px 10px;
 }
 
-#trade-warning {
+.form-warning {
     text-align: center;
     color: red;
 }

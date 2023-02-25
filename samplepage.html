@@ -55,9 +55,23 @@
                 <div class="dropdown">
                     <button class="info-button" onclick="unfoldManagementOptions()">WATER MANAGEMENT OPTIONS</button> 
                     <div id="management-options" class="dropdown-content">
-                        <a href="#" onclick="minFlowReqPrompt()" >Minimum Flow Requirement</a>
+                        <div id="minflow-form" title="Minimum Flow Requirement">
+                            <div id="minflow-warning" class="form-warning"></div>
+                            <form id="minflow-form-info">
+                                <fieldset>
+                                    <div class="form-input-container">
+                                        <p>Minimum Flow Requirement</p>
+                                    </div>
+                                    <div class="form-input-container">
+                                        <p>
+                                        <input name="minflowreq" id="minflowreqinput" type="text">
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <a href="#" onclick="minFlowReqPrompt()">Minimum Flow Requirement</a>
                         <div id="trade-form" title="Trading">
-                            <div id="trade-warning"></div>
+                            <div id="trade-warning" class="form-warning"></div>
                             <form id="trade-form-info">
                                 <fieldset>
                                     <div class="form-input-container">
@@ -154,6 +168,56 @@
                             </form>
                         </div>
                         <a href="#" onclick="tradePrompt()">Trade</a>
+                        <div id="build-dam-form" title="Building A Dam">
+                            <div id="build-dam-warning" class="form-warning"></div>
+                            <form id="build-dam-form-info">
+                                <fieldset>
+                                    <div class="form-input-container">
+                                        <label for="player">Player</label>
+                                        <select name="player" id="playerselect">
+                                            <option value="1">1-1803</option>
+                                            <option value="2">2-1810</option>
+                                            <option value="3">3-1817</option>
+                                            <option value="4">4-1824</option>
+                                            <option value="5">5-1831</option>
+                                            <option value="6">6-1838</option>
+                                            <option value="7">7-1845</option>
+                                            <option value="8">8-1852</option>
+                                            <option value="9">9-1859</option>
+                                            <option value="10">10-1866</option>
+                                            <option value="11">11-1873</option>
+                                            <option value="12">12-1881</option>
+                                            <option value="13">13-1888</option>
+                                            <option value="14">14-1895</option>
+                                            <option value="15">15-1902</option>
+                                            <option value="16">16-1909</option>
+                                            <option value="17">17-1916</option>
+                                            <option value="18">18-1923</option>
+                                            <option value="19">19-1930</option>
+                                            <option value="20">20-1937</option>
+                                            <option value="21">21-1994</option>
+                                            <option value="22">22-1951</option>
+                                            <option value="23">23-1958</option>
+                                            <option value="24">24-1965</option>
+                                            <option value="25">25-1972</option>
+                                            <option value="26">26-1979</option>
+                                            <option value="27">27-1986</option>
+                                            <option value="28">28-1993</option>
+                                            <option value="29">29-2000</option>
+                                            <option value="30">30-2007</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-input-container">
+                                        <label for="points">Points to Contribute</label>
+                                        <input name="points" id="dampointsinvestinput" type="text">
+                                    </div>
+                                    <div class="form-input-container">
+                                        <p>
+                                        <button id="dam-build-contribute" onclick="contributeDam()" type="button">Contribute</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
                         <a href="#" onclick="damPrompt()">Build A Dam</a>
                     </div>                
                 </div>
