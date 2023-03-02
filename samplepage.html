@@ -69,7 +69,9 @@
                                 </fieldset>
                             </form>
                         </div>
-                        <a href="#" onclick="minFlowReqPrompt()">Minimum Flow Requirement</a>
+                        <div class="option-anchor-row" onclick="minFlowReqPrompt()">
+                            <div class="option-label">Minimum Flow Requirement</div>
+                        </div>
                         <div id="trade-form" title="Trading">
                             <div id="trade-warning" class="form-warning"></div>
                             <form id="trade-form-info">
@@ -167,7 +169,29 @@
                                 </fieldset>
                             </form>
                         </div>
-                        <a href="#" onclick="tradePrompt()">Trade</a>
+                        <div class="option-anchor-row" onclick="tradePrompt()">
+                            <div class="option-label">Trade</div>
+                        </div>
+                        <div id="use-dam-form" title="Store or Release Water from Dam">
+                            <div id = "use-dam-warning" class="form-warning"></div>
+                            <form id = "use-dam-form-info">
+                                <fieldset>
+                                    <div class="form-input-container">
+                                        <label for="operation">Operation</label>
+                                        <select name="operation" id="operationselect">
+                                            <option value="none" selected disabled hidden>Operation</option>
+                                            <option value="store">Store</option>
+                                            <option value="withdraw">Withdraw</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-input-container">
+                                        <label for="amount">Water Amount</label>
+                                        <input name="amount" id="damvolumeinput" type="text"></input>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
                         <div id="build-dam-form" title="Building A Dam">
                             <div id="build-dam-warning" class="form-warning"></div>
                             <form id="build-dam-form-info">
@@ -218,7 +242,10 @@
                                 </fieldset>
                             </form>
                         </div>
-                        <a href="#" onclick="damPrompt()">Build A Dam</a>
+                        <div class="option-anchor-row" onclick="damPrompt()" id="dam-option">
+                            <div class="option-label">Build A Dam</div>
+                            <div class="checkmark" id="dam-checkmark">✓</div>
+                        </div>
                     </div>                
                 </div>
                 <div id="scoreboard-container" class="ui-widget-content">

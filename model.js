@@ -170,11 +170,15 @@ function fundDam(funderprio, amt){
 function buildDam(){
   if(state.damfund == 0){
     console.log("Dam fund is empty! Fund the dam before trying to build it");
-    return;
+    return false;
+  }
+  if(state.damactive == true){
+    console.log("Already have a dam active! You're not supposed to get here!");
+    return false;
   }
   state.damactive = true;
-  state.damcap = damfund;
-  return;
+  state.damcap = state.damfund;
+  return true;
 }
 
 // Fills the dam with some of the runoff for the year.
@@ -190,6 +194,11 @@ function fillDam(amt){
   }
   state.damheldvol += amt;
   state.runoff -= amt;
+  console.log(`Dam filled with ${amt} units of water.
+    Current Dam Holdings: ${state.damheldvol}
+    Dam Capacity: ${state.damcap}`);
+    calculateFlows();
+    updateVisible();
   return;
 }
 
@@ -200,9 +209,13 @@ function releaseDam(amt){
     console.log(`Error: Can't release ${amt} water from reserve of ${state.damheldvol}.`);
     return;
   }
+  console.log(`Withdrew ${amt} of water from dam.
+    Current Dam Holdings: ${state.damheldvol}
+    Dam Capacity: ${state.damcap}`);
   state.runoff += amt;
   state.damheldvol -= amt;
   calculateFlows();
+  updateVisible();
   return;
 }
 
@@ -327,9 +340,13 @@ function passYear() {
   submitScore(state.score);
   state.year += 1;
   state.trades = [];
-  setNewRunoff();
+  setNewRunoff(5740);
   calculateFlows();
   updateVisible();
+  if(state.damactive){
+    console.log("dam is active! updating");
+    $("#use-dam-form").dialog("open");
+  }
 }
 
 function resetGame() {
@@ -345,6 +362,7 @@ function resetGame() {
   setNewRunoff(7000);
   calculateFlows();
   updateVisible();
+  cleanupUI();
 }
 
 //HTML/CSS FUNCTIONS FROM HERE OUT
@@ -364,6 +382,16 @@ function minFlowReqPrompt(){
 function tradePrompt(){
   console.log('opening trade prompt');
   $("#trade-form").dialog("open");
+}
+
+// Everything that changes the UI's form from the beginning of the game
+// needs to be cleaned up after a game reset. 
+function cleanupUI(){
+  $("#dam-checkmark").hide();
+  $("#dam-option").css({
+    'pointer-events':'auto',
+    'color'    :'black'
+  });
 }
 
 function contributeDam(){
@@ -491,7 +519,40 @@ window.onload = function() {
   }
 
   function damBuildButton(){
-    console.log("placeholder");
+    console.log("Building Dam. Dam Donos:");
+    console.log(state.damdonos);
+    console.log(`Before build dam state: 
+      Active ? ${state.damactive}
+      Capacity ? ${state.damcap}
+      Damfund ? ${state.damfund}`);
+    if(buildDam()){
+      console.log(`After build dam state: 
+        Active ? ${state.damactive}
+        Capacity ? ${state.damcap}
+        Damfund ? ${state.damfund}`);
+      console.log(`Disabling Dam Build Button.`);
+      $("#dam-checkmark").show();
+      $("#dam-option").css({
+        'pointer-events':'none',
+        'color'    :'#919191'
+      });
+      builddamform.dialog('close');
+    }
+  }
+
+  function useDam(){
+    let answers = $("#use-dam-form-info").serializeArray();
+    console.log(answers);
+
+    if(answers[0].value == 'store'){
+      fillDam(Number(answers[1].value));
+    }
+    if(answers[0].value == 'withdraw'){
+      releaseDam(Number(answers[1].value))
+    }
+
+    usedamform.dialog('close');
+    $("#use-dam-form-info")[0].reset();
   }
 
   $( "#scoreboard-container" ).resizable({
@@ -528,6 +589,15 @@ window.onload = function() {
     },
 
   });
+
+  usedamform = $( "#use-dam-form" ).dialog({
+    autoOpen: false,
+    modal: true,
+    width: 'auto',
+    buttons: {
+      "Store or Release": useDam,
+    }
+  })
 
   
 }

@@ -18,3 +18,4 @@
 - [ ] Save/Load using .json.
 - [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
 - [ ] Round at earlier steps, keeping relative accuracy
+- [ ] Reset forms after submission

@@ -138,18 +138,27 @@ body {
     background-color: #99FFFF;;    
 }
 
-.dropdown-content a{
-    color: black;
+.option-label{
     font-size: smaller;
     text-decoration: none;
     display: block;
     padding: 5px 15px;
-    border: 1px solid black;
-    border-top: none;
 }
 
+.option-anchor-row {
+    border: 1px solid black;
+    border-top: none;
+    display: flex;
+}
 
-.dropdown a:hover{
+.checkmark{
+    color:black;
+    margin-left: auto;
+    margin-right: 10px;
+    display: none;
+}
+
+.option-anchor-row:hover{
     border-color: red;
     border-top: 1px solid red;
     margin-top: -1px;
