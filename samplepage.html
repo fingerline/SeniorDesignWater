@@ -199,6 +199,7 @@
                                     <div class="form-input-container">
                                         <label for="player">Player</label>
                                         <select name="player" id="playerselect">
+                                            <option value="none" selected disabled hidden>Player</option>
                                             <option value="1">1-1803</option>
                                             <option value="2">2-1810</option>
                                             <option value="3">3-1817</option>
@@ -402,9 +403,29 @@
                 <div class ="dropdown">
                     <button class="info-button" onclick="unfoldDataOptions()">VIEW DATA OPTIONS</button>
                     <div id="data-options" class="dropdown-content">
-                        <a href="#" onclick="viewTradingData()">VIEW TRADING DATA</a>
-                        <a href="#" onclick="viewDamData()">VIEW DAM DATA</a>
-                        <a href="#" onclick="viewScoringData()">VIEW SCORING DATA</a>
+                        <div class="option-anchor-row" onclick="viewTradingData()">VIEW TRADING DATA</div>
+                        <div class="option-anchor-row" onclick="viewDamData()">VIEW DAM DATA</div>
+                        <div class="option-anchor-row" onclick="viewScoringData()">VIEW SCORING DATA</div>
+                    </div>
+                </div>
+                <div id="dam-data-container" class="ui-widget-content">
+                    <div id="dam-data-content">
+                        <div id="dam-data-label">BUILD A DAM</div>
+                        <table id="dam-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Points Contributed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dam-table-body"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>TOTAL</td>
+                                    <td id="dam-total-contribution"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
                 <div id="use-points-graph">[Use Points Graph will be placed here.<br></o> 

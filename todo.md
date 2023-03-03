@@ -19,3 +19,13 @@
 - [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
 - [ ] Round at earlier steps, keeping relative accuracy
 - [ ] Reset forms after submission
+- [ ] Allow user to see maximums more clearly in dialogs
+
+## Core
+
+- [] Trading Table Draggable
+- [] Grade Table Draggable
+- [] Points Use Graph
+- [] River Visualizer
+- [] Re-add decorators
+- [] Two-segment point display

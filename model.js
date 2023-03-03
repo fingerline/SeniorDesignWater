@@ -1,5 +1,6 @@
 const MIN_RUNOFF = 5000;
 const MAX_RUNOFF = 20000; 
+const DAM_MAX_CAP = 40000;
 
 //converting water withdrawn to points
 const SCORETYPE = {
@@ -168,14 +169,6 @@ function fundDam(funderprio, amt){
 // Activates dam, allowing it to be used to store and release water at the beginning
 // of each year.
 function buildDam(){
-  if(state.damfund == 0){
-    console.log("Dam fund is empty! Fund the dam before trying to build it");
-    return false;
-  }
-  if(state.damactive == true){
-    console.log("Already have a dam active! You're not supposed to get here!");
-    return false;
-  }
   state.damactive = true;
   state.damcap = state.damfund;
   return true;
@@ -183,15 +176,6 @@ function buildDam(){
 
 // Fills the dam with some of the runoff for the year.
 function fillDam(amt){
-  if(amt > state.runoff - state.minflowreq){
-    console.log(`Error: Can't fill dam with ${amt} from runoff of ${state.runoff}.`);
-    return;
-  }
-  if(state.damheldvol + amt > state.damcap){
-    console.log(`Error: Can't fill dam with ${amt} as dam only has ${state.damcap - state.damheldvol}
-      space remaining.`);
-    return;
-  }
   state.damheldvol += amt;
   state.runoff -= amt;
   console.log(`Dam filled with ${amt} units of water.
@@ -205,10 +189,6 @@ function fillDam(amt){
 // Releases some of the stored water from the dam to add to the effective
 // runoff for the year.
 function releaseDam(amt){
-  if(amt > state.damheldvol){
-    console.log(`Error: Can't release ${amt} water from reserve of ${state.damheldvol}.`);
-    return;
-  }
   console.log(`Withdrew ${amt} of water from dam.
     Current Dam Holdings: ${state.damheldvol}
     Dam Capacity: ${state.damcap}`);
@@ -309,11 +289,11 @@ function initializeGame(){
 }
 
 function updateVisible() {
-  let table = document.getElementById("scoretable");
+  let scoreboardtable = document.getElementById("scoretable");
   for(let i = 1; i < 16; i++){
     firstloc = state.locationsbypriority[i-1];
     secondloc = state.locationsbypriority[i+14];
-    table.rows[i].innerHTML = `
+    scoreboardtable.rows[i].innerHTML = `
         <td class="normalcol ${firstloc.type}">${firstloc.priority}</td>
         <td class="normalcol ${firstloc.type}">${firstloc.requested}</td>
         <td class="normalcol ${firstloc.type}">${Math.round(firstloc.points)}</td>
@@ -323,6 +303,15 @@ function updateVisible() {
         <td class="normalcol ${secondloc.type}">${Math.round(secondloc.points)}</td>
     `;
   }
+  let damdatatable = $("#dam-data-table")[0];
+  htmlstring = '';
+  for(entry of Object.entries(state.damdonos)){
+    player = entry[0];
+    value = entry[1];
+    htmlstring = htmlstring + `<tr><td>${player}</td><td>${value}</td></tr>`;
+  }
+  $("#dam-table-body").html(htmlstring);
+  $("#dam-total-contribution").text(state.damfund);
   document.getElementById("points-display").innerHTML = state.score;
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
   document.getElementById("acrefeet-display").innerHTML = state.initrunoff;
@@ -340,7 +329,7 @@ function passYear() {
   submitScore(state.score);
   state.year += 1;
   state.trades = [];
-  setNewRunoff(5740);
+  setNewRunoff();
   calculateFlows();
   updateVisible();
   if(state.damactive){
@@ -398,7 +387,8 @@ function contributeDam(){
   console.log("Attempting to contribute.");
   const response = $("#build-dam-form-info").serializeArray();
   let player = response[0].value;
-  let points = response[1].value
+  let points = response[1].value;
+  let maxallowedpoints = DAM_MAX_CAP - state.damfund;
   if(!/^[0-9]*$/.test(points) || points == ""){
     $("#build-dam-warning").text("Contribution amount must be an integer!");
     return
@@ -410,9 +400,15 @@ function contributeDam(){
     $("#build-dam-warning").text(`Player ${player} can only contribute up to ${playerpoints} points!`);
     return
   }
+  if(points > maxallowedpoints){
+    $("#build-dam-warning").text(`The dam can only have ${DAM_MAX_CAP} donated total.
+    You can donate ${maxallowedpoints} more.`);
+  }
   else{
     console.log("Legal contribution.");
     fundDam(player,points);
+    $("#build-dam-warning").text("Contribution accepted.");
+    $("#build-dam-form-info")[0].reset();
     updateVisible();
   }
 
@@ -428,7 +424,7 @@ function viewTradingData(){
 }
 
 function viewDamData(){
-  alert("This functionality coming soon!")
+  $( "#dam-data-container" ).toggle();
 }
 
 function viewScoringData(){
@@ -525,6 +521,13 @@ window.onload = function() {
       Active ? ${state.damactive}
       Capacity ? ${state.damcap}
       Damfund ? ${state.damfund}`);
+    if(state.damfund == 0){
+      $( "#build-dam-warning" ).text("Dam fund is empty! You need to contribute points first.");
+      return
+    }
+    if(state.damactive == true){
+      $( "#build-dam-warning" ).text("You already have a dam! How did you get here?");
+    }
     if(buildDam()){
       console.log(`After build dam state: 
         Active ? ${state.damactive}
@@ -534,8 +537,10 @@ window.onload = function() {
       $("#dam-checkmark").show();
       $("#dam-option").css({
         'pointer-events':'none',
-        'color'    :'#919191'
+        'color'         :'#919191'
       });
+      $( "#build-dam-warning" ).text("");
+      $("#build-dam-form-info")[0].reset();
       builddamform.dialog('close');
     }
   }
@@ -543,12 +548,25 @@ window.onload = function() {
   function useDam(){
     let answers = $("#use-dam-form-info").serializeArray();
     console.log(answers);
-
+    amount = Number(answers[1].value);
     if(answers[0].value == 'store'){
-      fillDam(Number(answers[1].value));
+      if(amount > state.runoff - state.minflowreq){
+        $("#use-dam-warning").text(`Error: Can't fill dam with ${amount} from runoff of ${state.runoff}.`);
+        return;
+      }
+      if(state.damheldvol + amount > state.damcap){
+        $("#use-dam-warning").text(`Error: Can't fill dam with ${amount} as dam has ${state.damcap - state.damheldvol}
+          space remaining.`);
+        return;
+      }
+      fillDam(amount);
     }
     if(answers[0].value == 'withdraw'){
-      releaseDam(Number(answers[1].value))
+      if(amount > state.damheldvol){
+        $("#use-dam-warning").text(`Error: Can't release ${amount} water from reserve of ${state.damheldvol}.`);
+        return;
+      } 
+      releaseDam(amount);
     }
 
     usedamform.dialog('close');
@@ -560,6 +578,7 @@ window.onload = function() {
     minWidth: 390
   });
 
+  $( "#dam-data-container" ).draggable(); 
   tradeform = $( "#trade-form" ).dialog({
     autoOpen: false,
     modal: true,
@@ -598,6 +617,10 @@ window.onload = function() {
       "Store or Release": useDam,
     }
   })
+  
+  $( "#build-dam-form" ).on( "dialogbeforeclose", function( event, ui ) {
+    $( "#build-dam-warning").text("");
+  });
 
   
 }
