@@ -23,9 +23,10 @@
 
 ## Core
 
-- [] Trading Table Draggable
+- [X] Trading Table Draggable
 - [] Grade Table Draggable
 - [] Points Use Graph
 - [] River Visualizer
 - [] Re-add decorators
-- [] Two-segment point display
+- [] Two-segment point display  
+- [] Allow trades to pay for themselves

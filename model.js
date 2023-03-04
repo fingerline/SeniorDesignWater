@@ -312,6 +312,12 @@ function updateVisible() {
   }
   $("#dam-table-body").html(htmlstring);
   $("#dam-total-contribution").text(state.damfund);
+  htmlstring = '';
+  for(entry of state.trades){
+    htmlstring = htmlstring + `<tr><td>${entry.player1}</td><td>-${entry.volume}</td>
+    <td>${entry.priceperunit}</td><td>${entry.player2}</td><td>${entry.volume}</td>`;
+  }
+  $("#trading-table-body").html(htmlstring)
   document.getElementById("points-display").innerHTML = state.score;
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
   document.getElementById("acrefeet-display").innerHTML = state.initrunoff;
@@ -420,11 +426,11 @@ function damPrompt(){
 }
 
 function viewTradingData(){
-  alert("This functionality coming soon!")
+  $( "#trading-data-container" ).toggleClass("invisible");
 }
 
 function viewDamData(){
-  $( "#dam-data-container" ).toggle();
+  $( "#dam-data-container" ).toggleClass("invisible");
 }
 
 function viewScoringData(){
@@ -573,12 +579,26 @@ window.onload = function() {
     $("#use-dam-form-info")[0].reset();
   }
 
+  $(document).on('click', function(event) {
+    if (!$(event.target).closest('#management-button').length) {
+      console.log("it's not the management button! closing management");
+      $('#management-options').removeClass('showDrop');
+    }
+    if (!$(event.target).closest('#data-button').length) {
+      console.log("it's not the data button! closing data ");
+      $('#data-options').removeClass('showDrop');
+    }
+    
+  });
+
   $( "#scoreboard-container" ).resizable({
     minHeight: 477,
     minWidth: 390
   });
 
   $( "#dam-data-container" ).draggable(); 
+  $( "#trading-data-container" ).draggable();
+
   tradeform = $( "#trade-form" ).dialog({
     autoOpen: false,
     modal: true,
@@ -616,7 +636,7 @@ window.onload = function() {
     buttons: {
       "Store or Release": useDam,
     }
-  })
+  });
   
   $( "#build-dam-form" ).on( "dialogbeforeclose", function( event, ui ) {
     $( "#build-dam-warning").text("");

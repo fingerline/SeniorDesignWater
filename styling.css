@@ -184,6 +184,10 @@ fieldset {
     color: red;
 }
 
+.invisible{
+    opacity: 0%;
+}
+
 #scoreboard-container {
     background-color: #FBF49A;
     display: flex;
@@ -221,13 +225,54 @@ fieldset {
     width: 265px;
     border-radius: 6px;
     background-color: #ECC7DF;
-    display:none;
+    position:absolute;
+}
+
+#trading-data-container{
+    flex-direction: column;
+    align-items: center;
+    width: 265px;
+    border-radius: 6px;
+    background-color: #D1B8D9;
+    position:absolute;
+}
+
+#trading-data-subsecs-label-group{
+    display: flex;
+    font-size: 10px;
+    font-weight: bold;
+    width: 95%;
+    justify-content: space-between;
+}
+
+.trading-data-subsecs-label{
+    text-align: center;
+}
+
+#water-sold-label{
+    margin-left: 20px;
+}
+
+#water-bought-label{
+    margin-right: 14px;
 }
 
 #dam-data-content{
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#trading-data-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#trading-data-label{
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 #dam-data-label{
@@ -241,6 +286,16 @@ fieldset {
     border-collapse: collapse;
     width: 97%;
     height: 100%;
+    margin: 5px 0px 5px 0px;
+}
+
+#trading-data-container table{
+    font-weight: bold;
+    border: 2px solid black;
+    border-collapse: collapse;
+    width: 97%;
+    height: 100%;
+    margin: 5px 0px 5px 0px;
 }
 
 
