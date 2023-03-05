@@ -257,6 +257,7 @@ function updateScore(remainingflow){
     loc.points = loc.withdrawn * SCORETYPE[loc.type] + loc.tradepoints;
     usagepoints += loc.points;
   }
+  
   globalpoints = Math.round(usagepoints + fishpoints)
   console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
    `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
