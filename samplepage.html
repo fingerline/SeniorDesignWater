@@ -79,6 +79,7 @@
                                     <div class="form-input-container">
                                         <label for="seller">Seller</label>
                                         <select name="seller" id="sellerselect">
+                                            <option value="default" hidden disabled selected>Seller</option>
                                             <option value="1">1-1803</option>
                                             <option value="2">2-1810</option>
                                             <option value="3">3-1817</option>
@@ -114,6 +115,7 @@
                                     <div class="form-input-container">
                                         <label for="buyer">Buyer</label>
                                         <select name="buyer" id="buyerselect">
+                                            <option value="default" hidden disabled selected>Buyer</option>
                                             <option value="1">1-1803</option>
                                             <option value="2">2-1810</option>
                                             <option value="3">3-1817</option>
@@ -149,6 +151,7 @@
                                     <div class="form-input-container">
                                         <label for="tradevolume">Amount of Water to Trade (ac-ft)</label>
                                         <input name="tradevolume" id="tradevolumeinput" type="text">
+                                        <div id="trademax">The maximum is 0.</div>
                                     </div>
                                     <div class="form-input-container">
                                         <label for="price">Price</label>

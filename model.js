@@ -44,6 +44,14 @@ class Location{
     this.tradepoints = 0;
     
   }
+
+  resetVars(){
+    this.allotted = 0;
+    this.withdrawn = 0;
+    this.points = 0;
+    this.tradevol = 0;
+    this.tradepoints = 0;
+  }
   // These are static so they can probably be stored in a .json file somewhere and
   // Restored if push comes to shove, though I'd like to avoid doing so considering
   // graphics need to be done down the line.
@@ -212,34 +220,21 @@ function calculateFlows(){
 
   //initial theoretical cycle
   for(loc of state.locationsbypriority){
-
-    // console.log(`Loc ${location.priority}@${location.position}:`)
-    // console.log(`\tInflow:${state.currentwaterflow.toFixed(2)}`)
-    // console.log(`\tRequested:${location.requested.toFixed(2)}`)
     //theoretical inflow
     loc.allotted = Math.max(0, Math.min(loc.requested,
      state.currentwaterflow - state.minflowreq));
-    // console.log(`\tAllottment:${location.allotted.toFixed(2)}`);
     state.currentwaterflow -= loc.allotted;
-    
     //calculate t.consumption into outflow
     state.currentwaterflow += (loc.allotted * (1 - loc.percentconsumed));
-    // console.log(`\tOutflow:${state.currentwaterflow.toFixed(2)}`);
   }
 
-  //ending physical cycle
+  //ending theoretical cycle, resetting river flow
   state.currentwaterflow = state.runoff;
 
   for(loc of state.locationsbyposition){
-    // console.log(`Loc ${location.priority}@${location.position}:`);
-    // console.log(`\tInflow: ${state.currentwaterflow.toFixed(2)}`);
-    // console.log(`\tAlotted: ${location.allotted.toFixed(2)}`);
-    // console.log(`\tTradeflow: ${location.tradevol.toFixed(2)}`);
     loc.withdrawn = Math.min(state.currentwaterflow,
      loc.allotted + loc.tradevol);
-    // console.log(`\t!!Withdrawn: ${location.withdrawn.toFixed(2)}`);
     state.currentwaterflow -= (loc.withdrawn * (loc.percentconsumed));
-    // console.log(`\tOutflow: ${state.currentwaterflow.toFixed(2)}`);
   }
   updateScore(state.currentwaterflow);
 }
@@ -321,7 +316,7 @@ function updateVisible() {
   $("#trading-table-body").html(htmlstring)
   document.getElementById("points-display").innerHTML = state.score;
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
-  document.getElementById("acrefeet-display").innerHTML = state.initrunoff;
+  document.getElementById("acrefeet-display").innerHTML = state.runoff;
 }
 
 // This function handles the state information changes that
@@ -355,6 +350,9 @@ function resetGame() {
   state.damheldvol = 0;
   state.damcap = 0;
   state.minflowreq = 0;
+  for(loc of state.locationsbypriority){
+    loc.resetVars();
+  }
   setNewRunoff(7000);
   calculateFlows();
   updateVisible();
@@ -428,10 +426,30 @@ function damPrompt(){
 
 function viewTradingData(){
   $( "#trading-data-container" ).toggleClass("invisible");
+
+  isDisabled = $( "#trading-data-container" ).draggable( "option", "disabled" );
+  if(isDisabled){
+    $( "#trading-data-container" ).draggable("enable").css("z-index", "999");
+
+    console.log("enabling trading data draggable");
+  } else {
+    $( "#trading-data-container" ).draggable("disable").css("z-index","-29");
+    console.log("disabling trading data draggable"); 
+  }
+
 }
 
 function viewDamData(){
   $( "#dam-data-container" ).toggleClass("invisible");
+
+  isDisabled = $( "#dam-data-container" ).draggable( "option", "disabled" );
+  if(isDisabled){
+    $( "#dam-data-container" ).draggable("enable").css("z-index", "998");
+    console.log("enabling dam data draggable");
+  } else {
+    $( "#dam-data-container" ).draggable("disable").css("z-index","-30");
+    console.log("disabling dam data draggable"); 
+  }
 }
 
 function viewScoringData(){
@@ -465,7 +483,7 @@ window.onload = function() {
     let volume = answers[2].value;
     let price = answers[3].value;
     const sellerloc = state.locationsbypriority[seller-1];
-    const buyerloc = state.locationsbypriority[buyer-1]
+    const buyerloc = state.locationsbypriority[buyer-1];
     console.log(`seller: ${seller}, buyer: ${buyer}, volume: ${volume}, price: ${price}`);
     console.log(`Seller has ${sellerloc.withdrawn} to sell, Buyer has ${buyerloc.requested-buyerloc.withdrawn} to buy max with ${buyerloc.points} points.`);
     if(!/^[0-9]*$/.test(volume) || volume == ""){
@@ -478,6 +496,7 @@ window.onload = function() {
     }
     volume = parseInt(volume);
     price = parseInt(price);
+    amountlimit = Math.round(Math.min(buyerloc.requested - buyerloc.withdrawn),sellerloc.withdrawn);
     if(seller == buyer){
       $("#trade-warning").text("Buyer must be different from seller!");
       return
@@ -490,8 +509,9 @@ window.onload = function() {
       $("#trade-warning").text(`Player ${seller} can only sell ${Math.round(sellerloc.withdrawn)} ac-ft!`)
       return
     }
-    if(buyerloc.points < (volume*price)){
-      $("#trade-warning").text(`Transaction comes to ${volume*price} points, and buyer ${buyer} only has ${Math.round(buyerloc.points)} points!`)
+    //If the trade would cost more than the buyer could possibly make, allowing negatives in score.
+    if(volume * price > (buyerloc.requested * SCORETYPE[buyerloc.type])){
+      $("#trade-warning").text(`Transaction comes to ${volume*price} points, and max is ${(buyerloc.requested * SCORETYPE[buyerloc.type])}`);
       return
     }
     else{
@@ -582,11 +602,9 @@ window.onload = function() {
 
   $(document).on('click', function(event) {
     if (!$(event.target).closest('#management-button').length) {
-      console.log("it's not the management button! closing management");
       $('#management-options').removeClass('showDrop');
     }
     if (!$(event.target).closest('#data-button').length) {
-      console.log("it's not the data button! closing data ");
       $('#data-options').removeClass('showDrop');
     }
     
@@ -597,8 +615,12 @@ window.onload = function() {
     minWidth: 390
   });
 
-  $( "#dam-data-container" ).draggable(); 
-  $( "#trading-data-container" ).draggable();
+  $( "#dam-data-container" ).draggable({
+    disabled: true,
+  }).css("z-index", "-30");
+  $( "#trading-data-container" ).draggable({
+    disabled: true,
+  }).css("z-index", "-29");
 
   tradeform = $( "#trade-form" ).dialog({
     autoOpen: false,
@@ -642,6 +664,30 @@ window.onload = function() {
   $( "#build-dam-form" ).on( "dialogbeforeclose", function( event, ui ) {
     $( "#build-dam-warning").text("");
   });
+
+  tradeform.on("dialogbeforeclose", function( event, ui ){
+    $( "#trade-form-info" )[0].reset();
+    $( "#trade-warning" ).text("");
+    $( "#trademax" ).hide();
+  });
+
+
+  $( "#sellerselect, #buyerselect" ).on("change", function() {
+    console.log(`select change detected, vals ${ $("#sellerselect").val()}, ${ $("#buyerselect").val()}`);
+    if( $("#sellerselect").val() != null && $("#buyerselect").val() != null){
+      console.log("both not default.");
+      const answers = $("#trade-form-info").serializeArray();
+      const seller = answers[0].value;
+      const buyer = answers[1].value;
+      const sellerloc = state.locationsbypriority[seller-1];
+      const buyerloc = state.locationsbypriority[buyer-1];
+      console.log(`Sellerloc withdrawn : ${sellerloc.withdrawn}, buyer defecit ${buyerloc.requested - buyerloc.withdrawn}`);
+      amountlimit = Math.round(Math.min(buyerloc.requested - buyerloc.withdrawn, sellerloc.withdrawn));
+      $("#trademax").text(`The limit is ${amountlimit}.`).show();
+    }
+  });
+
+
 
   
 }

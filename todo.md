@@ -17,7 +17,7 @@
 - [ ] Allow user to see minflow at all times
 - [ ] Save/Load using .json.
 - [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
-- [ ] Round at earlier steps, keeping relative accuracy
+- [X] Round at earlier steps, keeping relative accuracy (ONLY ROUNDS ON DISPLAY)
 - [ ] Reset forms after submission
 - [ ] Allow user to see maximums more clearly in dialogs
 
@@ -29,4 +29,4 @@
 - [] River Visualizer
 - [] Re-add decorators
 - [] Two-segment point display  
-- [] Allow trades to pay for themselves
+- [X] Allow trades to pay for themselves (Required second look at trading functionality!)

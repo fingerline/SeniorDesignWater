@@ -237,6 +237,11 @@ fieldset {
     position:absolute;
 }
 
+#trademax{
+    align-self: flex-end;
+    display:none;
+}
+
 #trading-data-subsecs-label-group{
     display: flex;
     font-size: 10px;
