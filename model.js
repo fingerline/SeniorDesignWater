@@ -530,6 +530,7 @@ window.onload = function() {
       console.log(`Setting MinFlowReq to ${answer}`)
       $("#minflow-warning").text("");
       state.minflowreq = parseInt(answer);
+      $("#minflow-label").text(`Minimum Required Flow: ${state.minflowreq}`);
       calculateFlows();
       updateVisible();
       minflowform.dialog("close");
@@ -662,7 +663,9 @@ window.onload = function() {
   });
   
   $( "#build-dam-form" ).on( "dialogbeforeclose", function( event, ui ) {
+    $( "#maxdamcontribution").hide();
     $( "#build-dam-warning").text("");
+    $( "#build-dam-form-info")[0].reset();
   });
 
   tradeform.on("dialogbeforeclose", function( event, ui ){
@@ -671,9 +674,14 @@ window.onload = function() {
     $( "#trademax" ).hide();
   });
 
+  minflowform.on("dialogbeforeclose", function( event, ui){
+    $( "#minflow-warning" ).text("");
+    $( "#minflow-form-info" )[0].reset();
+  });
+
 
   $( "#sellerselect, #buyerselect" ).on("change", function() {
-    console.log(`select change detected, vals ${ $("#sellerselect").val()}, ${ $("#buyerselect").val()}`);
+    console.log(`select change in trade detected, vals ${ $("#sellerselect").val()}, ${ $("#buyerselect").val()}`);
     if( $("#sellerselect").val() != null && $("#buyerselect").val() != null){
       console.log("both not default.");
       const answers = $("#trade-form-info").serializeArray();
@@ -684,6 +692,17 @@ window.onload = function() {
       console.log(`Sellerloc withdrawn : ${sellerloc.withdrawn}, buyer defecit ${buyerloc.requested - buyerloc.withdrawn}`);
       amountlimit = Math.round(Math.min(buyerloc.requested - buyerloc.withdrawn, sellerloc.withdrawn));
       $("#trademax").text(`The limit is ${amountlimit}.`).show();
+    }
+  });
+
+  $( "#playerselect" ).on("change", function(){
+    const playerno = $( "#playerselect" ).val()
+    console.log(`select change in dam detected. vals playerselect ${ playerno }`);
+    if( playerno != null){
+      console.log("not default");
+      playerloc = state.locationsbypriority[playerno-1];
+      console.log(`Playerloc points: ${playerloc.points}`);
+      $("#maxdamcontribution").text(`The limit is ${playerloc.points}.`).show();
     }
   });
 

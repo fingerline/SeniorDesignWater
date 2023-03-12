@@ -188,6 +188,16 @@ fieldset {
     opacity: 0%;
 }
 
+#minflow-label{
+    margin-top: 10px;
+    font-weight: bolder;
+    padding: 8px;
+    background-color: white;
+    width: fit-content;
+    border-radius: 6px;
+    border: 2px solid darkgray;
+}
+
 #scoreboard-container {
     background-color: #FBF49A;
     display: flex;
@@ -238,6 +248,11 @@ fieldset {
 }
 
 #trademax{
+    align-self: flex-end;
+    display:none;
+}
+
+#maxdamcontribution{
     align-self: flex-end;
     display:none;
 }

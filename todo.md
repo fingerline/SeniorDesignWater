@@ -14,12 +14,12 @@
 
 ## Enhancements
 
-- [ ] Allow user to see minflow at all times
+- [x] Allow user to see minflow at all times
 - [ ] Save/Load using .json.
 - [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
 - [X] Round at earlier steps, keeping relative accuracy (ONLY ROUNDS ON DISPLAY)
-- [ ] Reset forms after submission
-- [ ] Allow user to see maximums more clearly in dialogs
+- [X] Reset forms after submission
+- [X] Allow user to see maximums more clearly in dialogs
 
 ## Core
 
@@ -30,3 +30,4 @@
 - [] Re-add decorators
 - [] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
+- [] no form redirect on enter!
