@@ -125,10 +125,6 @@ function setNewRunoff(setval = -1){
 function makeTrade(sellerprio, buyerprio, volume, priceperunit){
   seller = state.locationsbypriority[sellerprio-1];
   buyer = state.locationsbypriority[buyerprio-1];
-  if(volume > Math.min((buyer.requested - buyer.withdrawn), seller.withdrawn)){
-    console.log(`Trade of ${amount} above max of buyer defecit 
-      ${buyer.requested - buyer.withdrawn} or above seller withdrawable ${seller.withdrawn}.`);
-  }
   console.log(`${seller.name} (${seller.priority}) sells 
     ${volume} ac-ft of water to ${buyer.name} (${buyer.priority})
     at ${priceperunit} per ac-ft, for a total of ${volume * priceperunit}.`);
@@ -150,11 +146,6 @@ function fundDam(funderprio, amt){
   }
   else{
     funder = state.locationsbypriority[funderprio-1];
-    if(funder.points < amt){
-      console.log(`Error: Points allocated (${amt}) greater than points at
-        location ${funder.name} (${funder.priority}) which owns ${funder.points}.`);
-      return;
-    }
     funder.points -= amt;
     state.damdonos[funderprio] ??= 0;
     state.damdonos[funderprio] = state.damdonos[funderprio] + amt;
@@ -328,13 +319,11 @@ function passYear() {
   state.year += 1;
   state.trades = [];
   for(loc of state.locationsbypriority){
-    console.log(`Location ${loc.priority}: tradevol before reset: ${loc.tradevol}`);
     loc.allotted = 0;
     loc.withdrawn = 0;
     loc.points = 0;
     loc.tradevol = 0;
     loc.tradepoints = 0;
-    console.log(`     ${loc.priority}: tradevol after reset: ${loc.tradevol}`);
   }
   setNewRunoff();
   calculateFlows();

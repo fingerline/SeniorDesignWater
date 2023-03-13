@@ -16,7 +16,7 @@
 
 - [X] Allow user to see minflow at all times
 - [X] Save/Load using .json.
-- [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
+- [X] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
 - [X] Round at earlier steps, keeping relative accuracy (ONLY ROUNDS ON DISPLAY)
 - [X] Reset forms after submission
 - [X] Allow user to see maximums more clearly in dialogs
