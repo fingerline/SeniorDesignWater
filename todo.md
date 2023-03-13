@@ -20,22 +20,22 @@
 - [X] Round at earlier steps, keeping relative accuracy (ONLY ROUNDS ON DISPLAY)
 - [X] Reset forms after submission
 - [X] Allow user to see maximums more clearly in dialogs
-- [ ] Dam can be funded beyond reason on reload
+- [X] Dam can be funded beyond reason on reload
 
 ## Fixes
 
 - [X] Dam can be funded after the game is reloaded, even if dam already exists
-- [ ] MINREQ label does not update on load
-- [ ] Investigate: loading does not give you prompt for dam. Is this a bad thing?
-- [ ] Fix minflowreq, maybe more, getting appended to URL.
+- [X] MINREQ label does not update on load
+- [X] Investigate: loading does not give you prompt for dam. Is this a bad thing? (CAN'T ACCESS SAVE BUTTONS BEFORE TURN END. THIS IS FINE)
+- [X] Fix minflowreq, maybe more, getting appended to URL.
 
 ## Core
 
 - [X] Trading Table Draggable
-- [] Grade Table Draggable
-- [] Points Use Graph
-- [] River Visualizer
-- [] Re-add decorators
-- [] Two-segment point display  
+- [ ] Grade Table Draggable
+- [ ] Points Use Graph
+- [ ] River Visualizer
+- [ ] Re-add decorators
+- [ ] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
-- [] no form redirect on enter!
+- [ ] no form redirect on enter!
