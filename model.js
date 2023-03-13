@@ -44,14 +44,6 @@ class Location{
     this.tradepoints = 0;
     
   }
-
-  resetVars(){
-    this.allotted = 0;
-    this.withdrawn = 0;
-    this.points = 0;
-    this.tradevol = 0;
-    this.tradepoints = 0;
-  }
   // These are static so they can probably be stored in a .json file somewhere and
   // Restored if push comes to shove, though I'd like to avoid doing so considering
   // graphics need to be done down the line.
@@ -232,10 +224,13 @@ function calculateFlows(){
   state.currentwaterflow = state.runoff;
 
   for(loc of state.locationsbyposition){
+    console.log(`At position ${loc.position}, location ${loc.priority} is recieving a water flow of ${state.currentwaterflow}, and has been allotted ${loc.allotted}.`);
     loc.withdrawn = Math.min(state.currentwaterflow,
      loc.allotted + loc.tradevol);
     state.currentwaterflow -= (loc.withdrawn * (loc.percentconsumed));
+    console.log(`   As a result, locaiton ${loc.priority} has withdrawn ${loc.withdrawn} ac-ft of water.`);
   }
+  console.log(`After calculateFlows(), location 23 claims to have withdrawn ${state.locationsbyposition[0].withdrawn} in position, and in priority it reflects that it has ${state.locationsbypriority[22].withdrawn}.`);
   updateScore(state.currentwaterflow);
 }
 
@@ -317,6 +312,7 @@ function updateVisible() {
   document.getElementById("points-display").innerHTML = state.score;
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
   document.getElementById("acrefeet-display").innerHTML = state.runoff;
+  $("#minflow-label").text(`Minimum Required Flow: ${state.minflowreq}`);
 }
 
 // This function handles the state information changes that
@@ -331,6 +327,15 @@ function passYear() {
   submitScore(state.score);
   state.year += 1;
   state.trades = [];
+  for(loc of state.locationsbypriority){
+    console.log(`Location ${loc.priority}: tradevol before reset: ${loc.tradevol}`);
+    loc.allotted = 0;
+    loc.withdrawn = 0;
+    loc.points = 0;
+    loc.tradevol = 0;
+    loc.tradepoints = 0;
+    console.log(`     ${loc.priority}: tradevol after reset: ${loc.tradevol}`);
+  }
   setNewRunoff();
   calculateFlows();
   updateVisible();
@@ -350,9 +355,13 @@ function resetGame() {
   state.damheldvol = 0;
   state.damcap = 0;
   state.minflowreq = 0;
-  for(loc of state.locationsbypriority){
-    loc.resetVars();
-  }
+  for(loc in state.locationsbypriority){
+    loc.allotted = 0;
+    loc.withdrawn = 0;
+    loc.points = 0;
+    loc.tradevol = 0;
+    loc.tradepoints = 0;
+  } 
   setNewRunoff(7000);
   calculateFlows();
   updateVisible();
@@ -429,7 +438,7 @@ function viewTradingData(){
 
   isDisabled = $( "#trading-data-container" ).draggable( "option", "disabled" );
   if(isDisabled){
-    $( "#trading-data-container" ).draggable("enable").css("z-index", "999");
+    $( "#trading-data-container" ).draggable("enable").css("z-index", "51");
 
     console.log("enabling trading data draggable");
   } else {
@@ -444,7 +453,7 @@ function viewDamData(){
 
   isDisabled = $( "#dam-data-container" ).draggable( "option", "disabled" );
   if(isDisabled){
-    $( "#dam-data-container" ).draggable("enable").css("z-index", "998");
+    $( "#dam-data-container" ).draggable("enable").css("z-index", "50");
     console.log("enabling dam data draggable");
   } else {
     $( "#dam-data-container" ).draggable("disable").css("z-index","-30");
@@ -456,12 +465,61 @@ function viewScoringData(){
   alert("This functionality coming soon!")
 }
 
+
+// Downloads function as JSON Data. Needs to use URI w/ data: prefix because Firefox, chromium browsers like
+// opening these outright if they're marked as blob: instead of downloading them
 function saveGame(){
-  alert("This functionality coming soon! Saves will use a .json file.")
+  var stateURI = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, function(key, val){
+    if(key == "locationsbyposition"){
+      // We will reconsitute this list later to avoid making two actual different lists. Remember, the sorted lists
+      // consist of the pointers to shared objects.
+      return undefined
+    } else { return val }
+  }));
+  var elem = document.createElement('a');
+  elem.setAttribute("href", stateURI);
+  elem.setAttribute("download", "gamesave.json");
+  elem.click();
 }
 
 function loadGame(){
-  alert("This functionality coming soon! Saves will use a .json file.")
+  var input = document.createElement('input');
+  input.type = 'file';
+
+  input.onchange = (e) => { 
+
+    var file = e.target.files[0]; 
+ 
+    var reader = new FileReader();
+    reader.readAsText(file,'UTF-8');
+ 
+    reader.onload = readerEvent => {
+      var content = readerEvent.target.result; 
+      state = JSON.parse(content);
+
+      //reconstitute the second list
+      state.locationsbyposition = [...state.locationsbypriority];
+      state.locationsbyposition.sort((a,b) => (a.position > b.position) ? 1 : -1);
+
+      console.log(state);
+      console.log("Loaded state!");
+      calculateFlows();
+      updateVisible();
+
+       //reload non-automatic UI elements
+      if(state.damactive == true){
+        console.log(`Disabling Dam Build Button.`);
+        $("#dam-checkmark").show();
+        $("#dam-option").css({
+          'pointer-events':'none',
+          'color'         :'#919191'
+        });
+      }
+    }
+ 
+ }
+
+  input.click();
 }
 
 

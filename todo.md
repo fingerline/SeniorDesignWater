@@ -14,12 +14,20 @@
 
 ## Enhancements
 
-- [x] Allow user to see minflow at all times
-- [ ] Save/Load using .json.
+- [X] Allow user to see minflow at all times
+- [X] Save/Load using .json.
 - [ ] Remove redundant checks in backend for trade, minflow, dam contribution, etc.
 - [X] Round at earlier steps, keeping relative accuracy (ONLY ROUNDS ON DISPLAY)
 - [X] Reset forms after submission
 - [X] Allow user to see maximums more clearly in dialogs
+- [ ] Dam can be funded beyond reason on reload
+
+## Fixes
+
+- [X] Dam can be funded after the game is reloaded, even if dam already exists
+- [ ] MINREQ label does not update on load
+- [ ] Investigate: loading does not give you prompt for dam. Is this a bad thing?
+- [ ] Fix minflowreq, maybe more, getting appended to URL.
 
 ## Core
 
