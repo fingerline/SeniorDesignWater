@@ -749,7 +749,7 @@ window.onload = function() {
       const buyerloc = state.locationsbypriority[buyer-1];
       console.log(`Sellerloc withdrawn : ${sellerloc.withdrawn}, buyer defecit ${buyerloc.requested - buyerloc.withdrawn}`);
       amountlimit = Math.round(Math.min(buyerloc.requested - buyerloc.withdrawn, sellerloc.withdrawn));
-      $("#trademax").text(`The limit is ${amountlimit}.`).show();
+      $("#trademax").text(`The limit is ${Math.round(amountlimit)}.`).show();
     }
   });
 
@@ -760,7 +760,7 @@ window.onload = function() {
       console.log("not default");
       playerloc = state.locationsbypriority[playerno-1];
       console.log(`Playerloc points: ${playerloc.points}`);
-      $("#maxdamcontribution").text(`The limit is ${playerloc.points}.`).show();
+      $("#maxdamcontribution").text(`The limit is ${Math.round(playerloc.points)}.`).show();
     }
   });
 
