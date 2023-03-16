@@ -753,6 +753,53 @@ window.onload = function() {
     }
   });
 
+  var xValues = ["Urban", "Industrial", "Mining", "Farm"];
+  var yValues = [10, 5, 2, 1];
+  var barColors = ["#E78AB9", "#99FFFF","#DB9B3E","#8DC63F"];
+
+  new Chart("use-points-chart", {
+    type: "bar", 
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues,
+        borderColor: "black",
+        borderWidth: 1, 
+        barPercentage: 1,
+        categoryPercentage: 1
+      }]
+    },
+    options: {
+      plugins: {
+        legend:{
+          display: false,
+        }
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: "USE POINTS / ACRE-FOOT"
+      },
+      scales: {
+        y: {
+          display: true,  
+          max: 10,
+        },
+        x: {
+          ticks: {
+            z: 1,
+            mirror: true,
+            crossAlign: 'near',
+            font: {
+              weight: 'bolder',
+            }
+          }
+        }
+      }
+    },
+
+  });
 
 
   
