@@ -417,8 +417,8 @@ function contributeDam(){
   let player = response[0].value;
   let points = response[1].value;
   let maxallowedpoints = DAM_MAX_CAP - state.damfund;
-  if(!/^[0-9]*$/.test(points) || points == ""){
-    $("#build-dam-warning").text("Contribution amount must be an integer!");
+  if(!/^[0-9]*$/.test(points) || points == "" || parseInt(points) <= 0){
+    $("#build-dam-warning").text("Contribution amount must be a positive integer!");
     return
   }
   points = parseInt(points);
@@ -568,8 +568,8 @@ window.onload = function() {
     const buyerloc = state.locationsbypriority[buyer-1];
     console.log(`seller: ${seller}, buyer: ${buyer}, volume: ${volume}, price: ${price}`);
     console.log(`Seller has ${sellerloc.withdrawn} to sell, Buyer has ${buyerloc.requested-buyerloc.withdrawn} to buy max with ${buyerloc.points} points.`);
-    if(!/^[0-9]*$/.test(volume) || volume == ""){
-      $("#trade-warning").text("Volume must be an integer!");
+    if(!/^[0-9]*$/.test(volume) || volume == "" || parseInt(volume) <= 0){
+      $("#trade-warning").text("Volume must be a positive integer!");
       return
     }
     if(!/^[0-9]*$/.test(price) || price == ""){
@@ -608,7 +608,7 @@ window.onload = function() {
   function updateMinFlowReq(){
     let answer = $( "#minflow-form-info" ).serializeArray()[0].value;
     console.log(answer);
-    if(/^[0-9]*$/.test(answer)){
+    if(/^[0-9]*$/.test(answer) && parseInt(answer) > 0){
       console.log(`Setting MinFlowReq to ${answer}`)
       $("#minflow-warning").text("");
       state.minflowreq = parseInt(answer);
@@ -619,7 +619,7 @@ window.onload = function() {
     }
     else{
       console.log(`Bad minflow input: ${answer}`);
-      $( "#minflow-warning" ).text("Minimum flow must be a non-negative integer.");
+      $( "#minflow-warning" ).text("Minimum flow must be a positive integer.");
       return
     }
   }
@@ -691,6 +691,13 @@ window.onload = function() {
       $('#data-options').removeClass('showDrop');
     }
     
+  });
+
+  $(document).keypress(
+    function(event){
+      if (event.which == "13") {
+        event.preventDefault();
+      }
   });
 
   $( "#scoreboard-container" ).resizable({
