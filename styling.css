@@ -13,6 +13,7 @@ body {
      display: flex;
      height: 64px;
      font-weight: bold; 
+     position: relative;
 }
 
 #afy-container {
@@ -63,12 +64,22 @@ body {
 #save-button {
     width: 60px;
     margin-left: auto;
-    margin-right: 20px;
+    margin-right: 10px;
+    z-index: 3;
 }
 
 #load-button {
     width: 60px;
-    margin-right: 30px;
+    margin-right: 90px;
+    z-index: 3;
+}
+
+#birdsprite {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    height:100%;
 }
 
 #title-label {
@@ -104,17 +115,6 @@ body {
     width: 396px;
     height: 100%;
     padding:3px;
-}
-
-#visualizer-panel-container {
-    display: flex;
-    flex:1;
-    justify-content: center;
-    align-items: center;
-}
-
-#visualizer-text {
-    text-align: center;
 }
 
 .info-button {
@@ -381,3 +381,23 @@ td {
     background-color: #db9b3e;
 }
 
+/*Vsualizer container*/
+
+#visualizer-panel-container {
+    display: flex;
+    position: relative;
+    flex:1;
+    justify-content: center;
+    align-items: center;
+}
+
+#visualizer-text {
+    text-align: center;
+}
+
+#mountainsprite{
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 50%;
+}

@@ -10,7 +10,7 @@
 - [X] Move from year to year
 - [X] Build a dam
 - [X] Release and store damwater in flow manipulation
-- [ ] "Grade" based on defined grade curves
+- [X] "Grade" based on defined grade curves
 
 ## Enhancements
 
@@ -36,7 +36,7 @@
 - [X] Grade Table Draggable
 - [X] Points Use Graph
 - [ ] River Visualizer
-- [ ] Re-add decorators
+- [X] Re-add decorators
 - [X] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
 - [ ] DISABLE enter
