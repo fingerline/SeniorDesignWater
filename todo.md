@@ -11,6 +11,7 @@
 - [X] Build a dam
 - [X] Release and store damwater in flow manipulation
 - [X] "Grade" based on defined grade curves
+- [ ] Comment and sort.
 
 ## Enhancements
 
@@ -21,7 +22,8 @@
 - [X] Reset forms after submission
 - [X] Allow user to see maximums more clearly in dialogs
 - [X] Dam can be funded beyond reason on reload
-- [ ] Check if all of the updateVisible() calls are actually useful
+- [X] Check if all of the updateVisible() calls are actually useful
+- [ ] ADD "OLD SCORING": Old Scoring style makes scores get stored as soon as the year-beginning dam operation is done, which is extremely counterproductive. This means that trading does absolutely nothing to affect scores, which seems clearly wrong, however, we need to preserve the original functionality. I should add a toggle to use this old (probably incorrect) scoring style.
 
 ## Fixes
 
@@ -40,4 +42,3 @@
 - [X] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
 - [X] DISABLE enter
-- [ ] ADD "OLD SCORING": Old Scoring style makes scores get stored as soon as the year-beginning dam operation is done, which is extremely counterproductive. This means that trading does absolutely nothing to affect scores, which seems clearly wrong, however, we need to preserve the original functionality. I should add a toggle to use this old (probably incorrect) scoring style.

@@ -236,8 +236,8 @@ function updateScore(remainingflow){
   }
   
   globalpoints = Math.round(usagepoints + fishpoints)
-  console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
-   `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
+  // console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
+  //  `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
   state.score = globalpoints;
   state.fishscore = fishpoints;
   state.usescore = Math.round(usagepoints);
