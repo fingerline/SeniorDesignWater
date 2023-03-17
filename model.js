@@ -14,6 +14,8 @@ const SCORETYPE = {
 let state = {
   year: null,
   score: 0,
+  fishscore: 0,
+  usescore: 0,
   scorehistory: {},
   locationsbypriority: [],
   locationsbyposition: [],
@@ -215,13 +217,10 @@ function calculateFlows(){
   state.currentwaterflow = state.runoff;
 
   for(loc of state.locationsbyposition){
-    console.log(`At position ${loc.position}, location ${loc.priority} is recieving a water flow of ${state.currentwaterflow}, and has been allotted ${loc.allotted}.`);
     loc.withdrawn = Math.min(state.currentwaterflow,
      loc.allotted + loc.tradevol);
     state.currentwaterflow -= (loc.withdrawn * (loc.percentconsumed));
-    console.log(`   As a result, locaiton ${loc.priority} has withdrawn ${loc.withdrawn} ac-ft of water.`);
   }
-  console.log(`After calculateFlows(), location 23 claims to have withdrawn ${state.locationsbyposition[0].withdrawn} in position, and in priority it reflects that it has ${state.locationsbypriority[22].withdrawn}.`);
   updateScore(state.currentwaterflow);
 }
 
@@ -232,9 +231,6 @@ function updateScore(remainingflow){
   usagepoints = 0;
   fishpoints = Math.min(10*remainingflow, 20000);
   for(loc of state.locationsbypriority){
-    if(loc.priority == 23){
-      console.log(`Location 23: withdrawn: ${loc.withdrawn} trade volume: ${loc.tradevol}`);
-    }
     loc.points = loc.withdrawn * SCORETYPE[loc.type] + loc.tradepoints;
     usagepoints += loc.points;
   }
@@ -243,6 +239,8 @@ function updateScore(remainingflow){
   console.log(`Usage Points: ${usagepoints.toFixed(0)}\nFish ` +
    `Points: ${fishpoints.toFixed(0)}\nTotal Points: ${globalpoints}`);
   state.score = globalpoints;
+  state.fishscore = fishpoints;
+  state.usescore = Math.round(usagepoints);
 
 }
 
@@ -300,10 +298,15 @@ function updateVisible() {
     <td>${entry.priceperunit}</td><td>${entry.player2}</td><td>${entry.volume}</td>`;
   }
   $("#trading-table-body").html(htmlstring)
-  document.getElementById("points-display").innerHTML = state.score;
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
   document.getElementById("acrefeet-display").innerHTML = state.runoff;
   $("#minflow-label").text(`Minimum Required Flow: ${state.minflowreq}`);
+  for(chart of charts){
+    console.log("Updating chart");
+    charts[0].data.datasets[0].data = [state.usescore];
+    charts[0].data.datasets[1].data = [state.fishscore];
+    chart.update();
+  }
 }
 
 // This function handles the state information changes that
@@ -358,6 +361,10 @@ function resetGame() {
 }
 
 //HTML/CSS FUNCTIONS FROM HERE OUT
+
+//global variable that will keep track of chart objects that need to be refreshed
+let charts = [];
+
 function unfoldManagementOptions(){
   document.getElementById("management-options").classList.toggle("showDrop");
 }
@@ -763,6 +770,7 @@ window.onload = function() {
       labels: xValues,
       datasets: [{
         backgroundColor: barColors,
+        borderSkipped: false,
         data: yValues,
         borderColor: "black",
         borderWidth: 1, 
@@ -793,14 +801,128 @@ window.onload = function() {
             crossAlign: 'near',
             font: {
               weight: 'bolder',
-            }
-          }
+            },
+          },
+          grid: {display: false}
         }
       }
     },
 
   });
 
+  scorelabels = [
+    "Water Use Points",
+    "Fish"
+  ];
+  datavals = [[50000], [50000]];
+
+  let scorechart = new Chart("score-graph", {
+    type: "bar",
+    plugins: [ChartDataLabels],
+    data: {
+      labels: ["Use Flow Chart"], 
+      datasets: [{
+        backgroundColor: "#FFFF00",
+        label: "Use Flow",
+        data: [state.usescore],
+        borderColor: "black",
+        borderWidth: 2, 
+        barPercentage: 1,
+        categoryPercentage: 1,
+        borderSkipped: false,
+        datalabels: {
+          labels: {
+            tag: {
+              font: {
+                size: 10
+              },
+              anchor: "start",
+              align: "end",
+              display: 'auto',
+              rotation: 270,
+              formatter: function(value, context) {
+                return "USE"
+              }
+            },
+            value: {
+              anchor: "end",
+              align: "start",
+              font: {
+                weight: "bold",
+                size: 12
+              },
+              formatter: function(value, context){
+                return String(state.usescore);
+              }
+            }
+          }
+        }
+      }, {
+        backgroundColor: "#FFA500",
+        borderColor: "black",
+        borderWidth: 2, 
+        barPercentage: 1,
+        categoryPercentage: 1,
+        borderSkipped: "start",
+        label: "Fish Flow",
+        data: [state.fishscore],
+        datalabels: {
+          labels: {
+            tag: {
+              anchor: "end",
+              align: "start",
+              display:"auto",
+              rotation: 270,
+              font: {size: 10},
+              formatter: function(value, context){
+                return "FISH"
+              }
+            },
+            total: {
+              color: "#000000",
+              anchor: "end",
+              align: "end",
+              font: {
+                size: 16,
+                weight: "bold"
+              },
+              formatter: function(value,context){
+                return state.score;
+              }
+            }
+          }
+        }
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        legend:{
+          display: false,
+        }
+      },
+      indexAxis: 'y', 
+      responsive: true,
+      scales: {
+        x: {
+          display: false,
+          stacked: true,
+          grid: {display: false},
+          max: 130000,
+
+        },
+        y: {
+          display: false,
+          stacked: true,
+          grid: {display: false},
+        }
+      }
+    },
+
+    
+  });
+  charts.push(scorechart);
 
   
 }

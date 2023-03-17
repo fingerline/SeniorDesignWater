@@ -21,6 +21,7 @@
 - [X] Reset forms after submission
 - [X] Allow user to see maximums more clearly in dialogs
 - [X] Dam can be funded beyond reason on reload
+- [ ] Check if all of the updateVisible() calls are actually useful
 
 ## Fixes
 
@@ -33,9 +34,9 @@
 
 - [X] Trading Table Draggable
 - [ ] Grade Table Draggable
-- [ ] Points Use Graph
+- [X] Points Use Graph
 - [ ] River Visualizer
 - [ ] Re-add decorators
-- [ ] Two-segment point display  
+- [X] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
 - [ ] no form redirect on enter!

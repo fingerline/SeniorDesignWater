@@ -87,6 +87,12 @@ body {
     border: 2px solid black;
 }
 
+#score-graph-container {
+    margin: 6px;
+    flex: 1;
+    position: relative;
+}
+
 #game-field {
     background-color: #F2E1D4;
     display:flex;
@@ -269,6 +275,11 @@ fieldset {
     text-align: center;
 }
 
+#use-points-graph{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
 #water-sold-label{
     margin-left: 20px;
 }

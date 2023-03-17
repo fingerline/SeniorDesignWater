@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="jquery-ui.min.css">
         <script src="jquery-ui.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
     </head>
 
@@ -35,9 +36,10 @@
                 <div id="title-label">
                     WATER GAME
                 </div>
-                <div id="points-display">
-                    POINTSGOHERE
+                <div id="score-graph-container">
+                    <canvas id="score-graph"></canvas>
                 </div>
+                <div id="total-points-display"></div>
                 <button id="save-button" class="header-button" onclick="saveGame()">
                     Save Game
                 </button>
