@@ -245,11 +245,16 @@ function updateScore(remainingflow){
 }
 
 // Add score and runoff to score history and card.
+// Uses NEWSCORE type, where each year is catalogued as soon as the next year is started.
 function submitScore(score){
-  if(state.year != 0){
-    state.scorehistory[state.year] = (state.initrunoff, score);
-  }
-  return;
+  state.scorehistory.push(
+    {
+      year: state.year,
+      initrunoff: state.initrunoff,
+      finalscore: state.score
+    }
+  );
+  updateScoreHistoryGraph();
 }
 
 // Set the game to play from the first year. This resets all state values
@@ -302,10 +307,23 @@ function updateVisible() {
   document.getElementById("acrefeet-display").innerHTML = state.runoff;
   $("#minflow-label").text(`Minimum Required Flow: ${state.minflowreq}`);
   for(chart of charts){
-    console.log("Updating chart");
     charts[0].data.datasets[0].data = [state.usescore];
     charts[0].data.datasets[1].data = [state.fishscore];
     chart.update();
+  }
+}
+
+function updateScoreHistoryGraph(){
+  scoreplotpoints = [];
+  for(score of state.scorehistory){
+    scoreplotpoints.push(
+      {
+        x: score.initrunoff,
+        y: score.finalscore
+      }
+    );
+    charts[1].data.datasets[0].data = scoreplotpoints;
+    charts[1].update();
   }
 }
 
@@ -458,7 +476,16 @@ function viewDamData(){
 }
 
 function viewScoringData(){
-  alert("This functionality coming soon!")
+  $( "#scoring-history-container").toggleClass("invisible");
+
+  isDisabled = $( "#scoring-history-container" ).draggable( "option", "disabled" );
+  if(isDisabled){
+    $( "#scoring-history-container" ).draggable("enable").css("z-index", "52");
+    console.log("enabling scoring history draggable");
+  } else {
+    $( "#scoring-history-container" ).draggable("disable").css("z-index","-28");
+    console.log("disabling scoring history draggable"); 
+  }
 }
 
 
@@ -511,6 +538,7 @@ function loadGame(){
           'color'         :'#919191'
         });
       }
+      updateScoreHistoryGraph();
     }
  
  }
@@ -670,9 +698,17 @@ window.onload = function() {
     minWidth: 390
   });
 
+  $("#scoring-history-container").resizable({
+    minHeight: 290,
+    minWidth: 280
+  }).draggable({
+    disabled: true,
+  });
+
   $( "#dam-data-container" ).draggable({
     disabled: true,
   }).css("z-index", "-30");
+
   $( "#trading-data-container" ).draggable({
     disabled: true,
   }).css("z-index", "-29");
@@ -796,6 +832,7 @@ window.onload = function() {
         },
         x: {
           ticks: {
+            color: "#000000",
             z: 1,
             mirror: true,
             crossAlign: 'near',
@@ -810,18 +847,14 @@ window.onload = function() {
 
   });
 
-  scorelabels = [
-    "Water Use Points",
-    "Fish"
-  ];
-  datavals = [[50000], [50000]];
 
   let scorechart = new Chart("score-graph", {
     type: "bar",
     plugins: [ChartDataLabels],
     data: {
       labels: ["Use Flow Chart"], 
-      datasets: [{
+      datasets: [
+        {
         backgroundColor: "#FFFF00",
         label: "Use Flow",
         data: [state.usescore],
@@ -857,7 +890,7 @@ window.onload = function() {
             }
           }
         }
-      }, {
+        }, {
         backgroundColor: "#FFA500",
         borderColor: "black",
         borderWidth: 2, 
@@ -924,5 +957,242 @@ window.onload = function() {
   });
   charts.push(scorechart);
 
+  gradelabels = ["A", "B", "C", "D"];
+
+  datasteps = [1000, 3000, 5000, 7000, 9359, 12000, 15640, 20000]
+  aData = [20519.10,55159.20, 82448.10, 89172,92857.5,
+    96631.2, 100080, 100080];
+  compressMaxData = [
+    {x:1000,y:22799},
+    {x:3000,y:61288},
+    {x:5000,y:91609},
+    {x:7000,y:99080},
+    {x:9359,y:103175},
+    {x:12000,y:107368},
+    {x:15640,y:111200},
+    {x:20000,y:111200},
+  ];
+  compressAData = [
+    {x:1000,y:20519.1},
+    {x:3000,y:55159.2},
+    {x:5000,y:82448.1},
+    {x:7000,y:89172},
+    {x:9359,y:92857.5},
+    {x:12000,y:96631.2},
+    {x:15640,y:100080},
+    {x:20000,y:100080},
+  ];
+  compressBData = [
+    {x:1000,y:18239.2},
+    {x:3000,y:49030.40},
+    {x:5000,y:73287.2},
+    {x:7000,y:79264},
+    {x:9359,y:82540},
+    {x:12000,y:85894.4},
+    {x:15640,y:88960},
+    {x:20000,y:88960},
+  ];
+  compressCData = [
+    {x:1000,y:15959.3},
+    {x:3000,y:42901.6},
+    {x:5000,y:64126.3},
+    {x:7000,y:69356},
+    {x:9359,y:72222.5},
+    {x:12000,y:75157.6},
+    {x:15640,y:77840},
+    {x:20000,y:77840},
+  ];
+  compressDData = [
+    {x:1000,y:11399.5},
+    {x:3000,y:30644},
+    {x:5000,y:45804.5},
+    {x:7000,y:49540},
+    {x:9359,y:51587.5},
+    {x:12000,y:53684},
+    {x:15640,y:55600},
+    {x:20000,y:55600},
+  ];
+  
+
+  let historychart = new Chart("scoring-history-graph", {
+    type: "scatter",
+    plugins: [ChartDataLabels],
+    data: {
+      datasets: [
+        {
+          data: [],
+          backgroundColor:"#000000",
+          datalabels: {
+            labels: {
+              year: {
+                display: true,
+                anchor: "center",
+                align: "right",
+                color: "#000000",
+                formatter: function(value, context){
+                  return state.scorehistory[context.dataIndex].year;
+                }
+              }
+            }
+          }
+        },
+        {
+          data: compressMaxData,
+          showLine: true,
+          fill: "+1",
+          backgroundColor: "#F47A6C",
+          pointStyle:false,
+          borderColor: "#000000",
+          borderWidth: 1,
+          datalabels: {
+            labels: {
+              letter : {
+                display: false,
+              }
+            }
+          }
+        },
+        {
+          data: compressAData,
+          showLine: true,
+          fill: "+1",
+          backgroundColor: "#F4CC6C",
+          pointStyle:false,
+          borderColor: "#000000",
+          borderWidth: 1,
+          datalabels: {
+            labels: {
+              letter : {
+                color: "#000000",
+                anchor: "end",
+                align: 200,
+                offset: 0,
+                display: true,
+                formatter: function(value, context){
+                  if (context.dataIndex === 7){
+                    return "A"
+                  }
+                  return ""
+                }
+              }
+            }
+          }
+        },
+        {
+          data: compressBData,
+          showLine: true,
+          fill: "+1",
+          backgroundColor: "#F4F96C",
+          pointStyle:false,
+          borderColor: "#000000",
+          borderWidth: 1,
+          datalabels: {
+            labels: {
+              letter : {
+                color: "#000000",
+                anchor: "end",
+                align: 200,
+                offset: 0,
+                display: true,
+                
+                formatter: function(value, context){
+                  if (context.dataIndex === 7){
+                    return "B"
+                  }
+                  return ""
+                }
+              }
+            }
+          }
+        },
+        {
+          data: compressCData,
+          showLine: true,
+          fill:"+1",
+          backgroundColor: "#75F96C",
+          pointStyle:false,
+          borderColor: "#000000",
+          borderWidth: 1,
+          datalabels: {
+            labels: {
+              letter : {
+                color: "#000000",
+                anchor: "end",
+                align: 200,
+                offset: 0,
+                display: true,
+                
+                formatter: function(value, context){
+                  if (context.dataIndex === 7){
+                    return "C"
+                  }
+                  return ""
+                }
+              }
+            }
+          }
+        },
+        {
+          data: compressDData,
+          showLine: true,
+          fill:'origin',
+          backgroundColor: "#757AEB",
+          pointStyle:false,
+          borderColor: "#000000",
+          borderWidth: 1,
+          datalabels: {
+            labels: {
+              letter : {
+                color: "#000000",
+                anchor: "end",
+                align: 200,
+                offset: 0,
+                display: true,
+                
+                formatter: function(value, context){
+                  if (context.dataIndex === 7){
+                    return "D"
+                  }
+                  return ""
+                }
+              }
+            }
+          }
+        },
+        
+      ],
+    },
+    options: {
+      
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        legend:{
+          display: false,
+        },
+
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "RIVER FLOW (ACRE-FEET)"
+          },
+          max: 22000,
+          min: 0,
+        },
+        y: {
+          title: {
+            display: true,
+            text: "POINTS"
+          },
+          min: 0,
+          max: 120000,
+        }
+      }
+    }
+
+  });
+  charts.push(historychart);
   
 }

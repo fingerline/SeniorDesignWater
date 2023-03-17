@@ -215,6 +215,13 @@ fieldset {
     border-radius: 6px;
 }
 
+#scoring-history-container{
+    height: 290px;
+    width: 280px;
+    position: absolute;
+    background-color: #EAF3D7;
+}
+
 #scoreboard-label {
     text-align: center;
     padding: 9px;

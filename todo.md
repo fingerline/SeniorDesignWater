@@ -33,10 +33,11 @@
 ## Core
 
 - [X] Trading Table Draggable
-- [ ] Grade Table Draggable
+- [X] Grade Table Draggable
 - [X] Points Use Graph
 - [ ] River Visualizer
 - [ ] Re-add decorators
 - [X] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
-- [ ] no form redirect on enter!
+- [ ] DISABLE enter
+- [ ] ADD "OLD SCORING": Old Scoring style makes scores get stored as soon as the year-beginning dam operation is done, which is extremely counterproductive. This means that trading does absolutely nothing to affect scores, which seems clearly wrong, however, we need to preserve the original functionality. I should add a toggle to use this old (probably incorrect) scoring style.

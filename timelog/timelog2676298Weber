@@ -20,3 +20,4 @@ Time Log:
 3/4/23: 4:28pm - 6:45pm Trading movable down, bugswatted a rounding error, many formatting fixes. Almost there!!
 3/12/23: 4:01pm - 9:07pm Recovering from emergency. Finished everything other than two.js work.
 3/16/23: 5:53pm - 10:03pm Points use Chart and two-segment score display using ChartJS.
+3/17/23: 3:23pm -       Score history visualizer
