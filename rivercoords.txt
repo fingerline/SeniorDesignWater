@@ -1,0 +1,53 @@
+274, 571
+274, 528
+289, 462
+328, 436
+351, 404
+350, 369
+322, 348
+301, 313
+275, 273
+270, 229
+266, 186
+293, 151
+340, 109
+388, 78
+
+this is on a capture of width 610, height 575
+
+    [0, 0],
+    [0,43],
+    [15,109],
+    [54,135],
+    [77,167],
+    [76,202],
+    [48,223],
+    [27,258],
+    [1,298],
+    [-4,342],
+    [-8,385],
+    [19,420],
+    [66,462],
+    [114,493]
+
+"normalized" around """0,0""". the origin is the first point, each coordinate is the displacement from that point in space, where 0,0 is the MIDDLE of the bottom
+of the plane, and moving to the RIGHT is positive X, and moving UPWARDS is positive y.
+
+[
+    [400, 800],
+    [400, 757],
+    [415, 691], 
+    [454, 665], 
+    [477, 633], 
+    [476, 598], 
+    [448, 577], 
+    [427, 542], 
+    [401, 502], 
+    [396, 458], 
+    [392, 415], 
+    [419, 380], 
+    [466, 338], 
+    [514, 307]
+]
+
+same as above, but in the computer graphics fun coordinate dimension in a 800x800 space.

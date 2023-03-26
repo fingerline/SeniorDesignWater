@@ -547,7 +547,6 @@ function loadGame(){
 }
 
 
-
 //BASE GAME SETUP
 
 initializeGame();
@@ -1201,5 +1200,69 @@ window.onload = function() {
 
   });
   charts.push(historychart);
+
+  //TWO.JS stuff
+  rivercoords = [
+    {x:400, y:800},
+    {x:400, y:757},
+    {x:415, y:691}, 
+    {x:454, y:665}, 
+    {x:477, y:633}, 
+    {x:476, y:598}, 
+    {x:448, y:577}, 
+    {x:427, y:542}, 
+    {x:401, y:502}, 
+    {x:396, y:458}, 
+    {x:392, y:415}, 
+    {x:419, y:380}, 
+    {x:466, y:338}, 
+    {x:514, y:307}
+  ];
+  anchors =   [
+    new Two.Anchor(400, 800),
+    new Two.Anchor(400, 757),
+    new Two.Anchor(415, 691), 
+    new Two.Anchor(454, 665), 
+    new Two.Anchor(477, 633), 
+    new Two.Anchor(476, 598), 
+    new Two.Anchor(448, 577), 
+    new Two.Anchor(427, 542), 
+    new Two.Anchor(401, 502), 
+    new Two.Anchor(396, 458), 
+    new Two.Anchor(392, 415), 
+    new Two.Anchor(419, 380), 
+    new Two.Anchor(466, 338), 
+    new Two.Anchor(514, 307),
+  ]
+  console.log(anchors[0].toObject());
+
+  var elem = document.getElementById('visualizer');
+  var two = new Two({fitted:true}).appendTo(elem);
+
+  var curve = two.makePath(anchors, true);
+  curve.noFill();
+  var testspecimen = curve.vertices[0];
+  console.log(testspecimen.toObject());
+
+  for(anchor of curve.vertices){
+    two.makeCircle(anchor._x, anchor._y, 3);
+  }
+  
+  // var dot = two.makeCircle(two.width/2,two.height/2,3);
+  // dot.fill = '#52C5DC'
+  // dot.noStroke();
+  // var boxes = two.makeGroup();
+  // var box = two.makeRectangle((two.width/2),(two.height/2), 50, 50)
+  // var box2 = two.makeRectangle((two.width/2),(two.height/2) - 50, 50, 50);
+  // var box3 = two.makeRectangle((two.width/2),(two.height/2) + 50, 50, 50);
+  // boxes.add(box);
+  // boxes.add(box2);
+  // boxes.add(box3);
+  // boxes.noFill();
+  // box.rotation = (Math.PI/4);
+  two.update();
+
+  
+
   
 }

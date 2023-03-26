@@ -400,4 +400,17 @@ td {
     top: 0;
     right: 0;
     opacity: 50%;
+    z-index: 1;
+}
+
+#visualizer {
+    z-index: 2;
+    border: 1px solid red;
+    height: 500px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 800px;
+    width: 800px;
 }
