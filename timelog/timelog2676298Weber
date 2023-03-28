@@ -21,4 +21,5 @@ Time Log:
 3/12/23: 4:01pm - 9:07pm Recovering from emergency. Finished everything other than two.js work.
 3/16/23: 5:53pm - 10:03pm Points use Chart and two-segment score display using ChartJS.
 3/17/23: 3:23pm - 7:50pm  Score history visualizer ( End point is approximate, based on last commit. )
-3/25/23: 7:26 - 11:04 pm First crack at River Visualizer w/ two.js (WAY harder than I thought good gosh)
+3/25/23: 7:26pm - 11:04pm First crack at River Visualizer w/ two.js (WAY harder than I thought good gosh)
+3/27/23: 4:21pm - 8:56pm Abandoned two.js (bad support) move to paper.js. Visualizer half done

@@ -44,7 +44,7 @@ class Location{
     this.points = 0;
     this.tradevol = 0;
     this.tradepoints = 0;
-    
+    this.waterafterposition = 0;    
   }
   // These are static so they can probably be stored in a .json file somewhere and
   // Restored if push comes to shove, though I'd like to avoid doing so considering
@@ -220,6 +220,7 @@ function calculateFlows(){
     loc.withdrawn = Math.min(state.currentwaterflow,
      loc.allotted + loc.tradevol);
     state.currentwaterflow -= (loc.withdrawn * (loc.percentconsumed));
+    loc.waterafterposition = Math.round(state.currentwaterflow);  
   }
   updateScore(state.currentwaterflow);
 }
@@ -546,6 +547,86 @@ function loadGame(){
   input.click();
 }
 
+// PAPER STUFF
+paper.install(window);
+
+function constructVis() {
+  console.log("constructing vis");
+  [800,
+  739, 645, 608, 563, 513, 483, 434, 377, 314, 253, 204, 144, 100]
+
+  var rivercoords = [
+      {x:400, y:800},
+      {x:400, y:739},
+      {x:415, y:645}, 
+      {x:454, y:608}, 
+      {x:477, y:563}, 
+      {x:476, y:513}, 
+      {x:448, y:483}, 
+      {x:427, y:434}, 
+      {x:401, y:377}, 
+      {x:396, y:314}, 
+      {x:392, y:253}, 
+      {x:419, y:204}, 
+      {x:466, y:144}, 
+      {x:514, y:100},
+  ];
+  var pathpoints = [];
+  for(var point of rivercoords){
+    pathpoints.push(new Point(point.x, point.y));
+  }
+  var path = new Path(pathpoints);
+  console.log(path);
+  path.smooth();
+
+  let leftriverdefs = [];
+  let rightriverdefs = [];
+
+  for(let i = 0; i < 31; i++){
+    let offset = (path.length / 30) * i;
+    let point = path.getPointAt(offset);
+
+    var newdot = new Path.Circle(point, 3);
+    newdot.strokeColor = "black"
+
+    let currentwater = 0;
+    if(29 - i < 0){
+      currentwater = state.runoff;
+    } else {
+      currentwater = state.locationsbyposition[29-i].waterafterposition;
+    }
+
+    let normvec = path.getNormalAt(offset).multiply(100 * (currentwater/7000));
+
+    leftriverdefs.push(point.add(normvec));
+    rightriverdefs.push(point.subtract(normvec));
+
+    let normvecrep = new Path({segments: [point.subtract(normvec), point.add(normvec)], strokeColor: "red"});
+
+    let textlabel = new PointText(point);
+    textlabel.justification = "left"
+    
+    textlabel.content = `${i} : ${point}`
+    textlabel.position = point.add(new Point(25, 0));
+  }
+
+  var leftriverpath = new Path(leftriverdefs);
+  var rightriverpath = new Path(rightriverdefs);
+
+
+  leftriverpath.simplify([50])
+  rightriverpath.smooth();
+  riversegments = leftriverpath.segments.concat(rightriverpath.segments.reverse());
+  let riverpath = new Path(riversegments);
+  riverpath.closed = "true";
+
+  riverpath.fillColor = "blue";
+
+  riverpath.opacity = 0.5;
+
+  path.strokeColor = "black";
+}
+
 
 //BASE GAME SETUP
 
@@ -555,6 +636,8 @@ calculateFlows();
 
 window.onload = function() {
   updateVisible();
+  paper.setup("myCanvas");
+  constructVis();
 
   function trade(){
     const answers = $("#trade-form-info").serializeArray();
@@ -1199,70 +1282,5 @@ window.onload = function() {
     }
 
   });
-  charts.push(historychart);
-
-  //TWO.JS stuff
-  rivercoords = [
-    {x:400, y:800},
-    {x:400, y:757},
-    {x:415, y:691}, 
-    {x:454, y:665}, 
-    {x:477, y:633}, 
-    {x:476, y:598}, 
-    {x:448, y:577}, 
-    {x:427, y:542}, 
-    {x:401, y:502}, 
-    {x:396, y:458}, 
-    {x:392, y:415}, 
-    {x:419, y:380}, 
-    {x:466, y:338}, 
-    {x:514, y:307}
-  ];
-  anchors =   [
-    new Two.Anchor(400, 800),
-    new Two.Anchor(400, 757),
-    new Two.Anchor(415, 691), 
-    new Two.Anchor(454, 665), 
-    new Two.Anchor(477, 633), 
-    new Two.Anchor(476, 598), 
-    new Two.Anchor(448, 577), 
-    new Two.Anchor(427, 542), 
-    new Two.Anchor(401, 502), 
-    new Two.Anchor(396, 458), 
-    new Two.Anchor(392, 415), 
-    new Two.Anchor(419, 380), 
-    new Two.Anchor(466, 338), 
-    new Two.Anchor(514, 307),
-  ]
-  console.log(anchors[0].toObject());
-
-  var elem = document.getElementById('visualizer');
-  var two = new Two({fitted:true}).appendTo(elem);
-
-  var curve = two.makePath(anchors, true);
-  curve.noFill();
-  var testspecimen = curve.vertices[0];
-  console.log(testspecimen.toObject());
-
-  for(anchor of curve.vertices){
-    two.makeCircle(anchor._x, anchor._y, 3);
-  }
-  
-  // var dot = two.makeCircle(two.width/2,two.height/2,3);
-  // dot.fill = '#52C5DC'
-  // dot.noStroke();
-  // var boxes = two.makeGroup();
-  // var box = two.makeRectangle((two.width/2),(two.height/2), 50, 50)
-  // var box2 = two.makeRectangle((two.width/2),(two.height/2) - 50, 50, 50);
-  // var box3 = two.makeRectangle((two.width/2),(two.height/2) + 50, 50, 50);
-  // boxes.add(box);
-  // boxes.add(box2);
-  // boxes.add(box3);
-  // boxes.noFill();
-  // box.rotation = (Math.PI/4);
-  two.update();
-
-  
-
-  
+  charts.push(historychart);  
 }

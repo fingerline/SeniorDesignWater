@@ -414,3 +414,9 @@ td {
     height: 800px;
     width: 800px;
 }
+
+#myCanvas {
+    z-index: 3;
+    width: 800px;
+    height: 900px;
+}
