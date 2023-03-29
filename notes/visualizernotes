@@ -1,0 +1,24 @@
+# VISUALIZER AND WHY I'M GOING BACK TO THE ORIGINAL
+
+Making this after discovering why using spine-normals model won't work to replicate the original visualizer to any sort of accuracy:
+when the river turns even remotely, the proximity of the spine normals will cluster and stretch, this effect is amplified over really
+any significant distance (i.e. river flow increasing or just being large in general). Original approach was used to avoid this problem
+by making individual boxes represent river at specific (custom) locations to ensure that in most if not all game states, the pipes never end up clustering up very hard.
+
+![image info](./pictures/spineproblem.png)
+See this version of the spine based river visualizer at the worst it can get, 20,000 ac-ft of water with max minflowreq. Locations 17-28 on the right side notably sometimes swap places, even beyond just clustering over each other.
+
+![image info](./pictures/origspineproblem.png)
+This is the original implementation. It's really hardcoded and even a little gross to look at, but it preseves almost all of the information available even in the worst possible setup. It should be noted that the old version's year that we're looking at even has slightly more water in the river than the HTML5 version.
+
+## DECIPHERING THE HARDCODE
+
+A river "block" is defined in the code as such in WaterViewRiver.as:
+
+>			dataArr[0]  = [true,  L_BASE_X+250, BASE_Y,     BASE_X+540, BASE_Y+100, 45];
+where the indices are [onLeftSide, "useX", "useY", centerX, centerY, angle]. There are 30 such blocks present. Each block is set up as a WaterViewRiverItem with this array index (spread) as the arguments.
+
+The WaterViewRiverItem seems to contain a pipe setup (withdraw and return pipes), arrows, and the block of blue water.
+
+When drawing, the width of the block is defined by the river flow at the location divided by 100 (will need to be customized), and the height is a static 40.
+

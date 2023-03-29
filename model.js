@@ -10,6 +10,39 @@ const SCORETYPE = {
   'Urban': 10
 }
 
+const BLOCKDATA = [
+  {isLeft:true,  x:100, y:40,   centerX:390, centerY:140, angle:45},
+  {isLeft:false, x:548, y:200,  centerX:390, centerY:150, angle:40},
+  {isLeft:true,  x:70,  y:75,   centerX:355, centerY:150, angle:40},
+  {isLeft:false, x:528, y:235,  centerX:340, centerY:170, angle:35},
+  {isLeft:true,  x:40,  y:110,  centerX:340, centerY:170, angle:25},
+  {isLeft:true,  x:40,  y:140,  centerX:320, centerY:190, angle:20},
+  {isLeft:true,  x:40,  y:170,  centerX:300, centerY:210, angle:15},
+  {isLeft:true,  x:40,  y:200,  centerX:300, centerY:240, angle:10},
+  {isLeft:false, x:508, y:270,  centerX:310, centerY:250, angle:10},
+  {isLeft:true,  x:40,  y:235,  centerX:300, centerY:270, angle:5},
+  {isLeft:false, x:508, y:305,  centerX:310, centerY:290, angle:5},
+  {isLeft:true,  x:40,  y:270,  centerX:310, centerY:310, angle:0},
+  {isLeft:true,  x:40,  y:300,  centerX:310, centerY:340, angle:0},
+  {isLeft:false, x:528, y:340,  centerX:340, centerY:350, angle:0},
+  {isLeft:true,  x:40,  y:335,  centerX:340, centerY:370, angle:0},
+  {isLeft:false, x:528, y:375,  centerX:360, centerY:390, angle:-5},
+  {isLeft:true,  x:40,  y:370,  centerX:360, centerY:400, angle:0},
+  {isLeft:false, x:548, y:410,  centerX:390, centerY:417, angle:-5},
+  {isLeft:false, x:548, y:440,  centerX:390, centerY:440, angle:0},
+  {isLeft:false, x:548, y:470,  centerX:390, centerY:460, angle:15},
+  {isLeft:true,  x:50,  y:405,  centerX:360, centerY:470, angle:20},
+  {isLeft:false, x:538, y:505,  centerX:380, centerY:480, angle:30},
+  {isLeft:false, x:528, y:535,  centerX:355, centerY:490, angle:45},
+  {isLeft:false, x:528, y:565,  centerX:340, centerY:510, angle:50},
+  {isLeft:true,  x:50,  y:440,  centerX:330, centerY:490, angle:15},
+  {isLeft:true,  x:50,  y:470,  centerX:320, centerY:525, angle:15},
+  {isLeft:true,  x:50,  y:500,  centerX:310, centerY:550, angle:10},
+  {isLeft:false, x:528, y:600,  centerX:316, centerY:570, angle:20},
+  {isLeft:true,  x:50,  y:535,  centerX:310, centerY:590, angle:5},
+  {isLeft:true,  x:50,  y:565,  centerX:310, centerY:620, angle:0},
+];
+
 // Global state table, containing important information for all of the game.
 let state = {
   year: null,
@@ -312,6 +345,9 @@ function updateVisible() {
     charts[0].data.datasets[1].data = [state.fishscore];
     chart.update();
   }
+  if(typeof riverconstructs != 'undefined'){
+    constructVis();
+  }
 }
 
 function updateScoreHistoryGraph(){
@@ -550,82 +586,33 @@ function loadGame(){
 // PAPER STUFF
 paper.install(window);
 
+let riverspine;
+let riverconstructs = [];
+
 function constructVis() {
-  console.log("constructing vis");
-  [800,
-  739, 645, 608, 563, 513, 483, 434, 377, 314, 253, 204, 144, 100]
-
-  var rivercoords = [
-      {x:400, y:800},
-      {x:400, y:739},
-      {x:415, y:645}, 
-      {x:454, y:608}, 
-      {x:477, y:563}, 
-      {x:476, y:513}, 
-      {x:448, y:483}, 
-      {x:427, y:434}, 
-      {x:401, y:377}, 
-      {x:396, y:314}, 
-      {x:392, y:253}, 
-      {x:419, y:204}, 
-      {x:466, y:144}, 
-      {x:514, y:100},
-  ];
-  var pathpoints = [];
-  for(var point of rivercoords){
-    pathpoints.push(new Point(point.x, point.y));
-  }
-  var path = new Path(pathpoints);
-  console.log(path);
-  path.smooth();
-
-  let leftriverdefs = [];
-  let rightriverdefs = [];
-
-  for(let i = 0; i < 31; i++){
-    let offset = (path.length / 30) * i;
-    let point = path.getPointAt(offset);
-
-    var newdot = new Path.Circle(point, 3);
-    newdot.strokeColor = "black"
-
-    let currentwater = 0;
-    if(29 - i < 0){
-      currentwater = state.runoff;
-    } else {
-      currentwater = state.locationsbyposition[29-i].waterafterposition;
-    }
-
-    let normvec = path.getNormalAt(offset).multiply(100 * (currentwater/7000));
-
-    leftriverdefs.push(point.add(normvec));
-    rightriverdefs.push(point.subtract(normvec));
-
-    let normvecrep = new Path({segments: [point.subtract(normvec), point.add(normvec)], strokeColor: "red"});
-
-    let textlabel = new PointText(point);
-    textlabel.justification = "left"
-    
-    textlabel.content = `${i} : ${point}`
-    textlabel.position = point.add(new Point(25, 0));
+  for(construct of riverconstructs){
+    construct.remove();
   }
 
-  var leftriverpath = new Path(leftriverdefs);
-  var rightriverpath = new Path(rightriverdefs);
+  for(let i = 0; i < 30; i++){
+    block = BLOCKDATA[i];
+    let newblock = new Path.Rectangle({
+      point: [block.centerX, block.centerY],
+      size: [1, 40],
+      fillColor: '#00B0F0',
+    });
+    newblock.scale((state.locationsbyposition[i].waterafterposition)/100, 1);
+    newblock.rotate(block.angle);
+    riverconstructs.push(newblock);
 
-
-  leftriverpath.simplify([50])
-  rightriverpath.smooth();
-  riversegments = leftriverpath.segments.concat(rightriverpath.segments.reverse());
-  let riverpath = new Path(riversegments);
-  riverpath.closed = "true";
-
-  riverpath.fillColor = "blue";
-
-  riverpath.opacity = 0.5;
-
-  path.strokeColor = "black";
+    let newuse = new Path.Rectangle({
+      point: [block.x, block.y],
+      size: [10,10],
+      strokeColor: "black",
+    });
+  }
 }
+
 
 
 //BASE GAME SETUP
@@ -635,8 +622,8 @@ setNewRunoff(7000);
 calculateFlows();
 
 window.onload = function() {
-  updateVisible();
   paper.setup("myCanvas");
+  updateVisible();
   constructVis();
 
   function trade(){
