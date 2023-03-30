@@ -56,7 +56,7 @@ let state = {
   score: 0,
   fishscore: 0,
   usescore: 0,
-  scorehistory: {},
+  scorehistory: [],
   locationsbypriority: [],
   locationsbyposition: [],
   runoff: null,
@@ -347,18 +347,21 @@ function updateVisible() {
   document.getElementById("year-display").innerHTML = `Year ${state.year}`;
   document.getElementById("acrefeet-display").innerHTML = state.runoff;
   $("#minflow-label").text(`Minimum Required Flow: ${state.minflowreq}`);
-  for(chart of charts){
+  if(typeof charts[0] != 'undefined'){
     charts[0].data.datasets[0].data = [state.usescore];
     charts[0].data.datasets[1].data = [state.fishscore];
-    chart.update();
+    charts[0].update();
   }
   if(typeof riverconstructs != 'undefined'){
     constructVis();
   }
 }
 
-function updateScoreHistoryGraph(){
+function updateScoreHistoryGraph(reset = false){
   scoreplotpoints = [];
+  if(reset === true){
+    charts[1].data.datasets[0].data = [];
+  }
   for(score of state.scorehistory){
     scoreplotpoints.push(
       {
@@ -367,8 +370,8 @@ function updateScoreHistoryGraph(){
       }
     );
     charts[1].data.datasets[0].data = scoreplotpoints;
-    charts[1].update();
   }
+  charts[1].update();
 }
 
 // This function handles the state information changes that
@@ -394,7 +397,6 @@ function passYear() {
   calculateFlows();
   updateVisible();
   if(state.damactive){
-    console.log("dam is active! updating");
     $("#use-dam-form").dialog("open");
   }
 }
@@ -402,7 +404,7 @@ function passYear() {
 function resetGame() {
   state.year = 0;
   state.trades = [];
-  state.scorehistory = {};
+  state.scorehistory = [];
   state.damfund = 0;
   state.damdonos = {};
   state.damactive = false;
@@ -420,6 +422,7 @@ function resetGame() {
   calculateFlows();
   updateVisible();
   cleanupUI();
+  updateScoreHistoryGraph(true);
 }
 
 //HTML/CSS FUNCTIONS FROM HERE OUT
@@ -1246,7 +1249,7 @@ window.onload = function() {
   ];
   
 
-  let historychart = new Chart("scoring-history-graph", {
+  historychart = new Chart("scoring-history-graph", {
     type: "scatter",
     plugins: [ChartDataLabels],
     data: {
@@ -1262,7 +1265,11 @@ window.onload = function() {
                 align: "right",
                 color: "#000000",
                 formatter: function(value, context){
-                  return state.scorehistory[context.dataIndex].year;
+                  if(state.scorehistory.length != 0){
+                    return state.scorehistory[context.dataIndex].year;
+                  } else {
+                    return;
+                  }
                 }
               }
             }
