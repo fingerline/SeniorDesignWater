@@ -10,6 +10,13 @@ const SCORETYPE = {
   'Urban': 10
 }
 
+const TYPECOLOR = {
+  'Farm': '#8DC63F',
+  'Mining': '#DB9B3E',
+  'Industrial': '#99FFFF',
+  'Urban': '#E78AB9'
+}
+
 const BLOCKDATA = [
   {isLeft:true,  x:100, y:40,   centerX:390, centerY:140, angle:45},
   {isLeft:false, x:548, y:200,  centerX:390, centerY:150, angle:40},
@@ -624,12 +631,16 @@ function constructVis() {
       capside = 0;
       pointattachoffset = 5;
     }
+    let notenoughwater = false;
+    if(blocksloc.withdrawn != blocksloc.requested){
+      notenoughwater = true
+    }
 
     let pipegroup = new Group();
     let withdrawpipebase = new Path.Rectangle({
       point: [posX-20,newblock.position.y-15],
-      size: [40,10],
-      fillColor: '#DDF2FB',
+      size: [40,12],
+      fillColor: (notenoughwater ? '#FF0000' : '#DDF2FB'),
       strokeColor: 'black',
     });
     withdrawpipebase.smooth({
@@ -637,12 +648,22 @@ function constructVis() {
       from: smoothend[0],
       to: smoothend[1],
     });
-    
     pipegroup.addChild(withdrawpipebase);
+
+    let wtext = new PointText({
+      point: [withdrawpipebase.position.x, withdrawpipebase.position.y+4],
+      fontSize: 10,
+      fontWeight: 'bold',
+      fillColor: (notenoughwater ? '#FFFFFF' : '#000000'),
+      content: Math.round(blocksloc.withdrawn),
+      justification: 'center',
+    })
+    pipegroup.addChild(wtext);
+
     let wdcapline = new Path.Ellipse({
-      center: [withdrawpipebase.segments[capside].point.x, withdrawpipebase.segments[capside].point.y - 5],
-      radius: [5, 5],
-      fillColor: '#DDF2FB',
+      center: [withdrawpipebase.segments[capside].point.x, withdrawpipebase.segments[capside].point.y - 6],
+      radius: [6, 6],
+      fillColor: (notenoughwater ? '#FF0000' : '#DDF2FB'),
       strokeColor: "black"
     });
     pipegroup.addChild(wdcapline);
@@ -658,8 +679,8 @@ function constructVis() {
 
     let returnpipebase = new Path.Rectangle({
       point: [posX-20,newblock.position.y],
-      size: [40,10],
-      fillColor: '#BBB9CD',
+      size: [40,12],
+      fillColor: (notenoughwater ? '#FF0000' : '#BBB9CD'),
       strokeColor: 'black',
     });
     returnpipebase.smooth({
@@ -669,10 +690,20 @@ function constructVis() {
     });
     pipegroup.addChild(returnpipebase);
 
+    let rtext = new PointText({
+      point: [returnpipebase.position.x, returnpipebase.position.y+4],
+      fontSize: 10,
+      fontWeight: 'bold',
+      fillColor: (notenoughwater ? '#FFFFFF' : '#000000'),
+      content: Math.round((blocksloc.withdrawn * (1 - blocksloc.percentconsumed))),
+      justification: 'center',
+    })
+    pipegroup.addChild(rtext);
+
     let rtcapline = new Path.Ellipse({
-      center: [returnpipebase.segments[capside].point.x, returnpipebase.segments[capside].point.y - 5],
-      radius: [5, 5],
-      fillColor: '#BBB9CD',
+      center: [returnpipebase.segments[capside].point.x, returnpipebase.segments[capside].point.y - 6],
+      radius: [6, 6],
+      fillColor: (notenoughwater ? '#FF0000' : '#BBB9CD'),
       strokeColor: "black"
     });
     pipegroup.addChild(rtcapline);
@@ -696,6 +727,7 @@ function constructVis() {
       point: [block.x, block.y],
       size: [120,25],
       strokeColor: "black",
+      fillColor: TYPECOLOR[blocksloc.type],
     });
     
     riverconstructs.push(newuse);
