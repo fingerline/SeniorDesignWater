@@ -617,10 +617,12 @@ function constructVis() {
       posX = newblock.segments[0].point.x - 20;
       smoothend = [0, 1]
       capside = 3;
+      pointattachoffset = -5;
     } else {
       posX = newblock.segments[2].point.x + 20;
       smoothend = [2, 3]
       capside = 0;
+      pointattachoffset = 5;
     }
 
     let pipegroup = new Group();
@@ -645,6 +647,15 @@ function constructVis() {
     });
     pipegroup.addChild(wdcapline);
 
+    let wpointforline = new Point({
+      x: withdrawpipebase.segments[smoothend[0]].point.x + pointattachoffset,
+      y: withdrawpipebase.segments[smoothend[0]].point.y + pointattachoffset,
+    });
+    let wguidecircle = new Path.Circle({
+      center: wpointforline,
+    });
+    pipegroup.addChild(wguidecircle);
+
     let returnpipebase = new Path.Rectangle({
       point: [posX-20,newblock.position.y],
       size: [40,10],
@@ -666,6 +677,16 @@ function constructVis() {
     });
     pipegroup.addChild(rtcapline);
 
+    let rpointforline = new Point({
+      x: returnpipebase.segments[smoothend[0]].point.x + pointattachoffset,
+      y: returnpipebase.segments[smoothend[0]].point.y + pointattachoffset,
+    });
+    let rguidecircle = new Path.Circle({
+      center: rpointforline,
+    });
+    pipegroup.addChild(rguidecircle);
+    riverconstructs.push(rguidecircle);
+
     riverconstructs.push(pipegroup);
     blockpipegroup.addChild(pipegroup);
     
@@ -678,6 +699,30 @@ function constructVis() {
     });
     
     riverconstructs.push(newuse);
+
+    let wguidecircle2 = new Path.Circle({
+      center: [newuse.segments[capside].point.x, newuse.segments[capside].point.y - 22],
+    });
+    riverconstructs.push(wguidecircle2);
+
+    let withdrawconnector = new Path.Line({
+      from: wguidecircle.position,
+      to: wguidecircle2.position,
+      strokeColor: 'black',
+    });
+    riverconstructs.push(withdrawconnector);
+
+    let rguidecircle2 = new Path.Circle({
+      center: [newuse.segments[capside].point.x, newuse.segments[capside].point.y - 3],
+    });
+    riverconstructs.push(rguidecircle2);
+
+    let returnconnector = new Path.Line({
+      from: rguidecircle.position,
+      to: rguidecircle2.position,
+      strokeColor: 'black'
+    })
+    riverconstructs.push(returnconnector);
 
     let usetext = new PointText({
       point: [block.x + 60, block.y + 10],
