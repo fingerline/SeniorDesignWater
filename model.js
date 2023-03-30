@@ -596,20 +596,99 @@ function constructVis() {
 
   for(let i = 0; i < 30; i++){
     block = BLOCKDATA[i];
+    let blocksloc = state.locationsbyposition[i];
     let newblock = new Path.Rectangle({
       point: [block.centerX, block.centerY],
       size: [1, 40],
       fillColor: '#00B0F0',
     });
-    newblock.scale((state.locationsbyposition[i].waterafterposition)/100, 1);
-    newblock.rotate(block.angle);
+
+    let blockpipegroup = new Group();
+
+    newblock.scale((blocksloc.waterafterposition)/100, 1);
+
     riverconstructs.push(newblock);
+    blockpipegroup.addChild(newblock);
+    
+
+    let posX;
+    let capside;
+    if(block.isLeft === true){
+      posX = newblock.segments[0].point.x - 20;
+      smoothend = [0, 1]
+      capside = 3;
+    } else {
+      posX = newblock.segments[2].point.x + 20;
+      smoothend = [2, 3]
+      capside = 0;
+    }
+
+    let pipegroup = new Group();
+    let withdrawpipebase = new Path.Rectangle({
+      point: [posX-20,newblock.position.y-15],
+      size: [40,10],
+      fillColor: '#DDF2FB',
+      strokeColor: 'black',
+    });
+    withdrawpipebase.smooth({
+      type: 'continuous',
+      from: smoothend[0],
+      to: smoothend[1],
+    });
+    
+    pipegroup.addChild(withdrawpipebase);
+    let wdcapline = new Path.Ellipse({
+      center: [withdrawpipebase.segments[capside].point.x, withdrawpipebase.segments[capside].point.y - 5],
+      radius: [5, 5],
+      fillColor: '#DDF2FB',
+      strokeColor: "black"
+    });
+    pipegroup.addChild(wdcapline);
+
+    let returnpipebase = new Path.Rectangle({
+      point: [posX-20,newblock.position.y],
+      size: [40,10],
+      fillColor: '#BBB9CD',
+      strokeColor: 'black',
+    });
+    returnpipebase.smooth({
+      type: 'continuous',
+      from: smoothend[0],
+      to: smoothend[1],
+    });
+    pipegroup.addChild(returnpipebase);
+
+    let rtcapline = new Path.Ellipse({
+      center: [returnpipebase.segments[capside].point.x, returnpipebase.segments[capside].point.y - 5],
+      radius: [5, 5],
+      fillColor: '#BBB9CD',
+      strokeColor: "black"
+    });
+    pipegroup.addChild(rtcapline);
+
+    riverconstructs.push(pipegroup);
+    blockpipegroup.addChild(pipegroup);
+    
+    blockpipegroup.rotate(block.angle);
 
     let newuse = new Path.Rectangle({
       point: [block.x, block.y],
-      size: [10,10],
+      size: [120,25],
       strokeColor: "black",
     });
+    
+    riverconstructs.push(newuse);
+
+    let usetext = new PointText({
+      point: [block.x + 60, block.y + 10],
+      fontSize: 10,
+      fontWeight: 'bold',
+      content: `${blocksloc.priority}-${blocksloc.year}\n ${blocksloc.name}`,
+      justification: "center",
+    });
+
+    riverconstructs.push(usetext);
+
   }
 }
 
