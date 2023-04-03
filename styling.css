@@ -1,20 +1,23 @@
 body,html{
     height: 100vh;
     height: 100dvh;
-    padding: 0;
-    margin: 0;
-    overflow-y: hidden;
+    padding: 0px;
+    width: 100%;
+    margin: 0px;
 }
 
 body {
     font-family: Arial, Helvetica, sans-serif;
+    background-color: #F2E1D4;
+
 }
 
 #game {
     height: 100%;
     width: 100%;
     min-width: 1280px;
-
+    display: flex;
+    flex-direction: column;
 }
 
 #header {
@@ -118,16 +121,18 @@ body {
 }
 
 #game-field {
-    background-color: #F2E1D4;
     display:flex;
-    height: 100%;
+    flex: 1;
     width: 100%;
+    min-height: 0px;
 }
 
 #info-panel-container {
     width: 396px;
     height: 100%;
-    padding:3px;
+    padding: 0px 3px 0px 3px;
+    display: flex;
+    flex-direction: column;
 }
 
 .info-button {
@@ -299,7 +304,17 @@ fieldset {
     display: inline-block;
     position: relative;
     width: 100%;
+    min-height: 50px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    height: 20%
 }
+
+/* @media screen and (max-height: 870px) {
+    #use-points-graph {display: none;}
+    #alt-use-points {display: inline-block}
+} */
+
 #water-sold-label{
     margin-left: 20px;
 }
@@ -404,10 +419,6 @@ td {
     align-items: center;
 }
 
-#visualizer-text {
-    text-align: center;
-}
-
 #mountainsprite{
     position: absolute;
     top: 0;
@@ -421,10 +432,10 @@ td {
     position: absolute;
     top: 0;
     left: 0;
-    height: 95%;
+    height: 100%;
     width: 100%;
     display: flex;
-    padding: 5px;
+    padding: 5px 0px 5px 0px;
     justify-content: center;
 }
 
