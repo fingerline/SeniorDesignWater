@@ -798,11 +798,11 @@ function constructVis() {
   }
 
   //Test
-  let point1 = project.getItem({
-    name: /^bg0block/
-  });
-  point1.selected = true
-  console.log(`position: ${point1.position}`)
+  // let point1 = project.getItem({
+  //   name: /^bg0block/
+  // });
+  // point1.selected = true
+  // console.log(`position: ${point1.position}`)
 }
 
 
@@ -819,6 +819,14 @@ window.onload = function() {
   updateVisible();
   constructVis();
   
+  //test stuff for vis resizing
+  let origsize = paper.project.view.viewSize
+  console.log(origsize);
+
+  $("#myCanvas").height('100%');
+  $("#myCanvas").width($("#myCanvas").height())
+  $("#myCanvas").height( $("#myCanvas").height());
+
 
   function trade(){
     const answers = $("#trade-form-info").serializeArray();
