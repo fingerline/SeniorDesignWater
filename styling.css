@@ -405,7 +405,6 @@ td {
 
 #visualizer {
     z-index: 2;
-    border: 1px solid red;
     height: 500px;
     width: 500px;
     position: absolute;
