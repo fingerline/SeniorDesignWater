@@ -600,6 +600,7 @@ let riverspine;
 let riverconstructs = [];
 
 function constructVis() {
+  let pipegroups = new Group();
   for(construct of riverconstructs){
     construct.remove();
   }
@@ -613,7 +614,9 @@ function constructVis() {
       fillColor: '#00B0F0',
     });
 
-    let blockpipegroup = new Group();
+    let blockpipegroup = new Group({
+      name: `bg${i}`
+    });
 
     newblock.scale((blocksloc.waterafterposition)/100, 1);
 
@@ -639,12 +642,15 @@ function constructVis() {
       notenoughwater = true
     }
 
-    let pipegroup = new Group();
+    let pipegroup = new Group({
+      name: `pipegroup${i}`
+    });
     let withdrawpipebase = new Path.Rectangle({
       point: [posX-20,newblock.position.y-15],
       size: [40,12],
       fillColor: (notenoughwater ? '#FF0000' : '#DDF2FB'),
       strokeColor: 'black',
+      name: `pg${i}wdpipebase`
     });
     withdrawpipebase.smooth({
       type: 'continuous',
@@ -660,6 +666,7 @@ function constructVis() {
       fillColor: (notenoughwater ? '#FFFFFF' : '#000000'),
       content: Math.round(blocksloc.withdrawn),
       justification: 'center',
+      name: `pg${i}wdtext`
     })
     pipegroup.addChild(wtext);
 
@@ -667,7 +674,8 @@ function constructVis() {
       center: [withdrawpipebase.segments[capside].point.x, withdrawpipebase.segments[capside].point.y - 6],
       radius: [6, 6],
       fillColor: (notenoughwater ? '#FF0000' : '#DDF2FB'),
-      strokeColor: "black"
+      strokeColor: "black",
+      name: `pg${i}wdcap`
     });
     pipegroup.addChild(wdcapline);
 
@@ -685,6 +693,7 @@ function constructVis() {
       size: [40,12],
       fillColor: (notenoughwater ? '#FF0000' : '#BBB9CD'),
       strokeColor: 'black',
+      name: `pg${i}rtpipebase`
     });
     returnpipebase.smooth({
       type: 'continuous',
@@ -700,6 +709,7 @@ function constructVis() {
       fillColor: (notenoughwater ? '#FFFFFF' : '#000000'),
       content: Math.round((blocksloc.withdrawn * (1 - blocksloc.percentconsumed))),
       justification: 'center',
+      name: `pg${i}rttext`
     })
     pipegroup.addChild(rtext);
 
@@ -707,7 +717,8 @@ function constructVis() {
       center: [returnpipebase.segments[capside].point.x, returnpipebase.segments[capside].point.y - 6],
       radius: [6, 6],
       fillColor: (notenoughwater ? '#FF0000' : '#BBB9CD'),
-      strokeColor: "black"
+      strokeColor: "black",
+      name: `pg${i}rtcap`
     });
     pipegroup.addChild(rtcapline);
 
@@ -720,9 +731,12 @@ function constructVis() {
     });
     pipegroup.addChild(rguidecircle);
     riverconstructs.push(rguidecircle);
-
+    
+    pipegroups.addChild(pipegroup);
+    if(pipegroups.children.length === 1){
+    }
     riverconstructs.push(pipegroup);
-    blockpipegroup.addChild(pipegroup);
+    blockpipegroup.addChildren(pipegroup.children);
     
     blockpipegroup.rotate(block.angle);
 
@@ -768,7 +782,17 @@ function constructVis() {
     });
 
     riverconstructs.push(usetext);
-
+  }
+  let objs = project.getItems({
+    name: /^pg/
+  });
+  for(obj of objs){
+    if(obj.parent.name === "visprojlayer"){
+      continue;
+    } else {
+      obj.addTo(obj.parent.parent);
+    }
+    obj.bringToFront();
   }
 }
 
@@ -782,8 +806,10 @@ calculateFlows();
 
 window.onload = function() {
   paper.setup("myCanvas");
+  paper.project.activeLayer.name = "visprojlayer"
   updateVisible();
   constructVis();
+  
 
   function trade(){
     const answers = $("#trade-form-info").serializeArray();
