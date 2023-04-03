@@ -189,7 +189,8 @@ body {
 }
 
 .showDrop{
-    display:block
+    display:block;
+    z-index:100;
 }
 
 fieldset {
@@ -238,6 +239,7 @@ fieldset {
     width: 280px;
     position: absolute;
     background-color: #EAF3D7;
+    top: calc(30%);
 }
 
 #scoreboard-label {
@@ -267,8 +269,6 @@ fieldset {
     border-radius: 6px;
     background-color: #ECC7DF;
     position:absolute;
-    left:inherit;
-    top:inherit;
 }
 
 #trading-data-container{
