@@ -267,6 +267,8 @@ fieldset {
     border-radius: 6px;
     background-color: #ECC7DF;
     position:absolute;
+    left:inherit;
+    top:inherit;
 }
 
 #trading-data-container{
