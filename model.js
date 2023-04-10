@@ -738,9 +738,87 @@ function constructVis() {
     }
     riverconstructs.push(pipegroup);
     blockpipegroup.addChildren(pipegroup.children);
+
+    
     
     blockpipegroup.rotate(block.angle);
 
+    // DAM CREATION;
+    if(i == 1 && state.damactive == true){
+      let capoffset = 100 * (state.damcap / DAM_MAX_CAP);
+      let volheldoffset = 100 * (state.damheldvol / state.damcap);
+      let curvelength = newblock.curves[1].length;
+      let midpoint = newblock.curves[1].getPointAt(curvelength/2);
+      let tanvec = newblock.curves[1].getTangentAt(curvelength/2).multiply(100);
+      let normvec = newblock.curves[1].getNormalAt(curvelength/2).multiply(80);
+      let startpoint = midpoint.subtract(tanvec);
+      let endpoint = midpoint.add(tanvec);
+      
+      let wallpath = new Path({
+        strokeColor: 'black',
+        closed: true,
+        fillColor: '#DDDDDD'
+      });
+      wallpath.add(startpoint, endpoint,[endpoint.x, (endpoint.y - capoffset)] ,[startpoint.x, (startpoint.y - capoffset)]);
+
+      let targetline = wallpath.curves[0];
+      let targetpoint1 = targetline.getPointAt(targetline.length*.8);
+      let targetpoint2 = targetline.getPointAt(targetline.length*.2);
+      let targetpoint3 = targetpoint2.add(normvec).add(tanvec.divide(2));
+      let targetpoint4 = targetpoint1.add(normvec).add(tanvec.divide(2));
+
+      let baseloop = new Path({
+        strokeColor: 'black',
+        closed: true,
+      });
+      baseloop.add(targetpoint1, targetpoint2, targetpoint3, targetpoint4);
+      let toploop = new Path({
+        strokeColor: 'black',
+        closed: true,
+      });
+      toploop.add(
+        [targetpoint1.x, (targetpoint1.y-capoffset)],
+        [targetpoint2.x, (targetpoint2.y-capoffset)],
+        [targetpoint3.x, (targetpoint3.y-capoffset)],
+        [targetpoint4.x, (targetpoint4.y-capoffset)],
+      );
+      let backwall = new Path.Line({
+        from: [targetpoint4.x, targetpoint4.y-capoffset],
+        to: targetpoint4,
+        strokeColor: 'black',
+      });
+      let heldloop = new Path({
+        strokeColor: 'black',
+        closed: true,
+      });
+      heldloop.add(
+        [targetpoint1.x, (targetpoint1.y-volheldoffset)],
+        [targetpoint2.x, (targetpoint2.y-volheldoffset)],
+        [targetpoint3.x, (targetpoint3.y-volheldoffset)],
+        [targetpoint4.x, (targetpoint4.y-volheldoffset)],
+      );
+      let waterwall = new Path({
+        strokeColor: 'black',
+        closed: true,
+      });
+      waterwall.add(
+        targetpoint1,
+        [targetpoint1.x, (targetpoint1.y-volheldoffset)],
+        [targetpoint4.x, (targetpoint4.y-volheldoffset)],
+        targetpoint4,
+      );
+      if(volheldoffset != 0){
+        heldloop.fillColor = '#00B0F0'
+        waterwall.fillColor = '#00B0F0'
+      }
+      riverconstructs.push(waterwall, heldloop, backwall, toploop, baseloop, wallpath);
+      baseloop.bringToFront();
+      toploop.bringToFront();
+      wallpath.bringToFront();
+
+
+
+    }
     let newuse = new Path.Rectangle({
       point: [block.x, block.y],
       size: [120,25],

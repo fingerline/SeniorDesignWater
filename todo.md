@@ -31,13 +31,15 @@
 - [X] MINREQ label does not update on load
 - [X] Investigate: loading does not give you prompt for dam. Is this a bad thing? (CAN'T ACCESS SAVE BUTTONS BEFORE TURN END. THIS IS FINE)
 - [X] Fix minflowreq, maybe more, getting appended to URL.
+- [] Dam's held line seems to dissapearunder the base after update.
+- [] Dam doesn't lose volume?
 
 ## Core
 
 - [X] Trading Table Draggable
 - [X] Grade Table Draggable
 - [X] Points Use Graph
-- [ ] River Visualizer
+- [X] River Visualizer
 - [X] Re-add decorators
 - [X] Two-segment point display  
 - [X] Allow trades to pay for themselves (Required second look at trading functionality!)
