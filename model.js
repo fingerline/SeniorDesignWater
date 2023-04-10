@@ -1001,6 +1001,7 @@ window.onload = function() {
       $( "#build-dam-warning" ).text("");
       $("#build-dam-form-info")[0].reset();
       builddamform.dialog('close');
+      updateVisible();  
     }
   }
 
