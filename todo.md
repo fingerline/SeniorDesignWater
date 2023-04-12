@@ -31,8 +31,10 @@
 - [X] MINREQ label does not update on load
 - [X] Investigate: loading does not give you prompt for dam. Is this a bad thing? (CAN'T ACCESS SAVE BUTTONS BEFORE TURN END. THIS IS FINE)
 - [X] Fix minflowreq, maybe more, getting appended to URL.
-- [] Dam's held line seems to dissapearunder the base after update.
-- [] Dam doesn't lose volume?
+- [X] Dam's held line seems to dissapearunder the base after update.
+- [X] Dam doesn't lose volume?
+- [X] Dam error text doesn't clear on success.
+- [] Dam dissapears at 0 water flow
 
 ## Core
 

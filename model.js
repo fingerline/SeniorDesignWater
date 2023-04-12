@@ -746,7 +746,7 @@ function constructVis() {
     // DAM CREATION;
     if(i == 1 && state.damactive == true){
       let capoffset = 100 * (state.damcap / DAM_MAX_CAP);
-      let volheldoffset = 100 * (state.damheldvol / state.damcap);
+      let volheldoffset = capoffset * (state.damheldvol / state.damcap);
       let curvelength = newblock.curves[1].length;
       let midpoint = newblock.curves[1].getPointAt(curvelength/2);
       let tanvec = newblock.curves[1].getTangentAt(curvelength/2).multiply(100);
@@ -1113,6 +1113,13 @@ window.onload = function() {
     $( "#maxdamcontribution").hide();
     $( "#build-dam-warning").text("");
     $( "#build-dam-form-info")[0].reset();
+    $( "#damvolumeinput").val('');
+  });
+
+  $( "#use-dam-form" ).on( "dialogbeforeclose", function( event, ui ) {
+    $( "#maxdamuseaction").hide();
+    $( "#use-dam-warning").text("");
+    $( "#use-dam-form-info" )[0].reset();
   });
 
   tradeform.on("dialogbeforeclose", function( event, ui ){
@@ -1126,6 +1133,16 @@ window.onload = function() {
     $( "#minflow-form-info" )[0].reset();
   });
 
+  $( "#operationselect" ).on("change", function() {
+    const operation = $( "#operationselect" ).val();
+    if(operation == "store"){
+      $( "#maxdamuseaction" ).text(`Maximum: ${Math.min(state.runoff, state.damcap - state.damheldvol)}`).show();
+    }
+    else if(operation == "withdraw"){
+      $( "#maxdamuseaction" ).text(`Maximum: ${state.damheldvol}`).show();
+    }
+
+  });
 
   $( "#sellerselect, #buyerselect" ).on("change", function() {
     console.log(`select change in trade detected, vals ${ $("#sellerselect").val()}, ${ $("#buyerselect").val()}`);
