@@ -432,7 +432,7 @@ td {
 #visualizer {
     z-index: 2;
     position: absolute;
-    top: 0;
+    top: 1%;
     left: 0;
     height: 98%;
     width: 100%;
