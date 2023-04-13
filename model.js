@@ -352,9 +352,28 @@ function updateVisible() {
     charts[0].data.datasets[1].data = [state.fishscore];
     charts[0].update();
   }
-  if(typeof riverconstructs != 'undefined'){
+  if(typeof riverconstructs != 'undefined' && riverconstructs.length > 0){
+    
+    project.activeLayer.bounds = (
+      new Rectangle({
+        x:0,
+        y:0,
+        width: 628,
+        height: 620,
+      })
+    );
     constructVis();
-  }
+
+    project.activeLayer.fitBounds(
+      new Rectangle({
+        x:0,
+        y:0,
+        width: paper.view.bounds.width - 40,
+        height: paper.view.bounds.height - 40,
+      })
+    );
+
+  } 
 }
 
 function updateScoreHistoryGraph(reset = false){
@@ -604,6 +623,8 @@ function constructVis() {
   for(construct of riverconstructs){
     construct.remove();
   }
+  riverconstructs = []
+  riverconstructs.push(pipegroups);
 
   for(let i = 0; i < 30; i++){
     block = BLOCKDATA[i];
@@ -618,6 +639,7 @@ function constructVis() {
     let blockpipegroup = new Group({
       name: `bg${i}`
     });
+    riverconstructs.push(blockpipegroup);
 
     newblock.scale((blocksloc.waterafterposition)/100, 1);
 
@@ -683,9 +705,11 @@ function constructVis() {
     let wpointforline = new Point({
       x: withdrawpipebase.segments[smoothend[0]].point.x + pointattachoffset,
       y: withdrawpipebase.segments[smoothend[0]].point.y + pointattachoffset,
+      name: 'wpointforline',
     });
     let wguidecircle = new Path.Circle({
       center: wpointforline,
+      name: 'wguidecircle'
     });
     pipegroup.addChild(wguidecircle);
 
@@ -726,9 +750,11 @@ function constructVis() {
     let rpointforline = new Point({
       x: returnpipebase.segments[smoothend[0]].point.x + pointattachoffset,
       y: returnpipebase.segments[smoothend[0]].point.y + pointattachoffset,
+      name: 'rpointforline'
     });
     let rguidecircle = new Path.Circle({
       center: rpointforline,
+      name: 'rguidecircle'
     });
     pipegroup.addChild(rguidecircle);
     riverconstructs.push(rguidecircle);
@@ -757,7 +783,8 @@ function constructVis() {
       let wallpath = new Path({
         strokeColor: 'black',
         closed: true,
-        fillColor: '#DDDDDD'
+        fillColor: '#DDDDDD',
+        name: 'wallpath',
       });
       wallpath.add(startpoint, endpoint,[endpoint.x, (endpoint.y - capoffset)] ,[startpoint.x, (startpoint.y - capoffset)]);
 
@@ -770,11 +797,13 @@ function constructVis() {
       let baseloop = new Path({
         strokeColor: 'black',
         closed: true,
+        name: 'baseloop'
       });
       baseloop.add(targetpoint1, targetpoint2, targetpoint3, targetpoint4);
       let toploop = new Path({
         strokeColor: 'black',
         closed: true,
+        name: 'toploop',
       });
       toploop.add(
         [targetpoint1.x, (targetpoint1.y-capoffset)],
@@ -786,10 +815,12 @@ function constructVis() {
         from: [targetpoint4.x, targetpoint4.y-capoffset],
         to: targetpoint4,
         strokeColor: 'black',
+        name: 'backwall'
       });
       let heldloop = new Path({
         strokeColor: 'black',
         closed: true,
+        name: 'heldloop',
       });
       heldloop.add(
         [targetpoint1.x, (targetpoint1.y-volheldoffset)],
@@ -800,6 +831,7 @@ function constructVis() {
       let waterwall = new Path({
         strokeColor: 'black',
         closed: true,
+        name: 'waterwall',
       });
       waterwall.add(
         targetpoint1,
@@ -815,21 +847,20 @@ function constructVis() {
       baseloop.bringToFront();
       toploop.bringToFront();
       wallpath.bringToFront();
-
-
-
     }
     let newuse = new Path.Rectangle({
       point: [block.x, block.y],
       size: [120,25],
       strokeColor: "black",
       fillColor: TYPECOLOR[blocksloc.type],
+      name: 'newuse'
     });
     
     riverconstructs.push(newuse);
 
     let wguidecircle2 = new Path.Circle({
       center: [newuse.segments[capside].point.x, newuse.segments[capside].point.y - 22],
+      name: 'wguidecircle2',
     });
     riverconstructs.push(wguidecircle2);
 
@@ -837,18 +868,21 @@ function constructVis() {
       from: wguidecircle.position,
       to: wguidecircle2.position,
       strokeColor: 'black',
+      name: 'withdrawconnector'
     });
     riverconstructs.push(withdrawconnector);
 
     let rguidecircle2 = new Path.Circle({
       center: [newuse.segments[capside].point.x, newuse.segments[capside].point.y - 3],
+      name: 'rguidecircle2'
     });
     riverconstructs.push(rguidecircle2);
 
     let returnconnector = new Path.Line({
       from: rguidecircle.position,
       to: rguidecircle2.position,
-      strokeColor: 'black'
+      strokeColor: 'black',
+      name: 'returnconnector'
     })
     riverconstructs.push(returnconnector);
 
@@ -858,9 +892,10 @@ function constructVis() {
       fontWeight: 'bold',
       content: `${blocksloc.priority}-${blocksloc.year}\n ${blocksloc.name}`,
       justification: "center",
+      name: 'usetext',
     });
-
     riverconstructs.push(usetext);
+
   }
   let objs = project.getItems({
     name: /^pg/
@@ -876,12 +911,14 @@ function constructVis() {
   }
 
   //Test
-  // let point1 = project.getItem({
-  //   name: /^bg0block/
+  // paper.project.activeLayer.fitBounds(paper.view.bounds);
+  // let testrectangle = new Path.Rectangle({
+  //   point: [0,0],
+  //   size: [40,20],
+  //   name: "testrect"
   // });
-  // point1.selected = true
-  // console.log(`position: ${point1.position}`)
 }
+
 
 
 
@@ -893,13 +930,14 @@ calculateFlows();
 
 window.onload = function() {
   paper.setup("myCanvas");
+  console.log("PAPER SET UP");
   paper.project.activeLayer.name = "visprojlayer"
-  updateVisible();
+  console.log("CONSTRUCTING VIS");
   constructVis();
-  
-  //test stuff for vis resizing
-  let origsize = paper.project.view.viewSize
-  console.log(origsize);
+  console.log("CONSTRUCTED VIS");
+  console.log("UPDATING VIS");
+  updateVisible();
+  console.log("UPDATED VIS");
 
   $("#myCanvas").height('100%');
   $("#myCanvas").width($("#myCanvas").height())
