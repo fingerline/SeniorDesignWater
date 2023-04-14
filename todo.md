@@ -23,7 +23,7 @@
 - [X] Allow user to see maximums more clearly in dialogs
 - [X] Dam can be funded beyond reason on reload
 - [X] Check if all of the updateVisible() calls are actually useful
-- [ ] ADD "OLD SCORING": Old Scoring style makes scores get stored as soon as the year-beginning dam operation is done, which is extremely counterproductive. This means that trading does absolutely nothing to affect scores, which seems clearly wrong, however, we need to preserve the original functionality. I should add a toggle to use this old (probably incorrect) scoring style.
+- [DISCARDED] ADD "OLD SCORING": Old Scoring style makes scores get stored as soon as the year-beginning dam operation is done, which is extremely counterproductive. This means that trading does absolutely nothing to affect scores, which seems clearly wrong, however, we need to preserve the original functionality. I should add a toggle to use this old (probably incorrect) scoring style.
 
 ## Fixes
 
@@ -34,7 +34,8 @@
 - [X] Dam's held line seems to dissapearunder the base after update.
 - [X] Dam doesn't lose volume?
 - [X] Dam error text doesn't clear on success.
-- [] Dam dissapears at 0 water flow
+- [X] Dam dissapears at 0 water flow
+- [X] Dam contribution rounding
 
 ## Core
 
