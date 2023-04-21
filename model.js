@@ -986,7 +986,7 @@ function constructVis() {
 paper.install(window);
 setupLocationData();
 initializeGame();
-setNewRunoff(7000);
+setNewRunoff(15529);
 calculateFlows();
 
 window.onload = function() {
@@ -1032,11 +1032,11 @@ window.onload = function() {
       return
     }
     if(volume > (buyerloc.requested - buyerloc.withdrawn)){
-      $("#trade-warning").text(`Player ${buyer} can only withdraw ${Math.round(buyerloc.requested - buyerloc.withdrawn)} ac-ft more!`);
+      $("#trade-warning").text(`Player ${buyer} can only withdraw ${Math.min(buyerloc.requested - buyerloc.withdrawn)} ac-ft more!`);
       return
     }
     if(volume > sellerloc.withdrawn){
-      $("#trade-warning").text(`Player ${seller} can only sell ${Math.round(sellerloc.withdrawn)} ac-ft!`)
+      $("#trade-warning").text(`Player ${seller} can only sell ${Math.min(sellerloc.withdrawn)} ac-ft!`)
       return
     }
     //If the trade would cost more than the buyer could possibly make, allowing negatives in score.
